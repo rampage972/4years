@@ -14,12 +14,16 @@
     "@testing-library/user-event": "^7.2.1",
     "bootstrap": "^4.5.2",
     "canvas-confetti": "^1.2.0",
+    "node-sass": "^4.14.1",
+    "random": "^2.2.0",
+    "random-org": "^2.1.0",
     "react": "^16.13.1",
     "react-csv": "^2.0.3",
     "react-dom": "^16.13.1",
     "react-reveal": "^1.2.2",
     "react-scripts": "3.4.3",
-    "react-transition-group": "^4.4.1"
+    "react-transition-group": "^4.4.1",
+    "swiper": "^6.2.0"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import './Lottery.css'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import SwiperCore, { Autoplay } from 'swiper';
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
@@ -7,12 +9,19 @@ import { Button, Collapse, List, ListItem, ListItemText, Paper } from '@material
 import { faDollarSign, faMoneyBillWave } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import userName from './nameMapping.json'
-import { CSVLink, CSVDownload } from "react-csv";
-const confetti = require('canvas-confetti');
+// Import Swiper styles
+import 'swiper/swiper.scss';
+const confetti = require('canvas-confetti')
+const random = require('random')
+const RandomOrg = require('random-org');
+const randomOrg = new RandomOrg({ apiKey: 'b558199b-0a92-43cb-991b-23551659a901' });
+SwiperCore.use([Autoplay]);
 export default class Lottery extends Component {
     constructor() {
         super()
         this.state = {
+            speedAutoPlay: 100,
+            autoPlay: { delay: 0 },
             csvData: [
                 ["Giải đậc biệt", "Giải nhất", "Giải nhì", "Giải ba", "Giải tư", "Giải 5"],
             ],
@@ -40,11 +49,13 @@ export default class Lottery extends Component {
                     id: 1,
                 }
             ],
+            classicRand: [],
+            mordermRand: [],
             isClickedRoll: false,
             interval: "",
             intervalMultiple: "",
             currentPosition: 1,
-            currentPrize: 5,
+            currentPrize: 0,
             listWinner: [[], [], [], [], [], []],
             listRandomNum: [],
             reward: [
@@ -97,6 +108,23 @@ export default class Lottery extends Component {
 
     }
     componentWillMount = () => {
+        // let { classicRand, mordermRand } = this.state
+        // let intervalMap = setInterval(() => {
+        //     let classicRanNumber = Math.floor(Math.random() * 100);
+        //     let mordermRanNumber = random.int(0, 100)
+        //     if (classicRand[classicRanNumber] == null)
+        //         classicRand[classicRanNumber] = 0
+        //     else classicRand[classicRanNumber]++
+        //     if (mordermRand[mordermRanNumber] == null)
+        //         mordermRand[mordermRanNumber] = 0
+        //     else mordermRand[mordermRanNumber]++
+        //     this.setState({ classicRand, mordermRand })
+        // }, 100)
+        // // setTimeout(() => {
+        // //     clearInterval(intervalMap)
+        // //     console.log(classicRand)
+        // //     console.log(mordermRand)
+        // // }, 10000)
         let { listUser, currentUser, listWinner, currentPrize } = this.state
         listUser = userName
         this.setState({ listUser, listWinner })
@@ -130,43 +158,70 @@ export default class Lottery extends Component {
     setRandom = () => {
         let { listUser, listWinner, currentPrize, isClickedRoll } = this.state
         let randomNumber
+        let trullyRandomNumber
+        randomOrg.generateIntegers({ min: 1, max: listUser.length - 1, n: 1 })
+            .then(function (result) {
+                trullyRandomNumber = result.random.data
+            });
         if (!isClickedRoll) {
             this.setState({ isClickedRoll: true })
-            let interval = setInterval(() => {
-                randomNumber = [Math.floor(Math.random() * listUser.length)]
-                this.setState({ currentUser: listUser[randomNumber], currentPosition: randomNumber })
-            }, 100)
-            this.setState({ interval }, () => {
-                let time = 3000
-                if (currentPrize == 0) time = 10000
-                setTimeout(() => {
-                    clearInterval(this.state.interval)
-                    listWinner[currentPrize].push(listUser[randomNumber])
-                    listUser.splice(randomNumber, 1)
-                    console.log(listWinner)
-                    this.setState({ listWinner, listUser, interval: "", isClickedRoll: false })
-                    let myCanvas = document.getElementById('fireWork')
-                    let myConfetti = confetti.create(myCanvas, {
-                        resize: true,
-                        useWorker: true
-                    });
-                    myConfetti({
-                        particleCount: 300,
-                        spread: 60,
-                        origin: { y: 0.6 }
-                    });
-                }, time)
-            })
+            // if (currentPrize == 0) {
+            //     setTimeout(() => {
+            //       let intervalAutoPlay=  setInterval(() => {
+            //             let { speedAutoPlay } = this.state
+            //             speedAutoPlay += 10
+            //             this.setState({ speedAutoPlay })
+
+            //         },100)
+            //         setTimeout
+            //     }, 2000)
+            // }
+            // else 
+            {
+
+                let interval = setInterval(() => {
+                    randomNumber = [random.int(0, listUser.length - 1)]
+                    this.setState({ currentUser: listUser[randomNumber], currentPosition: randomNumber })
+                }, 100)
+                this.setState({ interval }, () => {
+                    let time = 6000
+                    if (currentPrize == 0) time = 10000
+                    setTimeout(() => {
+                        clearInterval(this.state.interval)
+                        this.setState({ currentUser: listUser[trullyRandomNumber], currentPosition: trullyRandomNumber })
+                        listWinner[currentPrize].push(listUser[trullyRandomNumber])
+                        listUser.splice(trullyRandomNumber, 1)
+                        this.setState({ listWinner, listUser, interval: "", isClickedRoll: false })
+                        let myCanvas = document.getElementById('fireWork')
+                        let myConfetti = confetti.create(myCanvas, {
+                            resize: true,
+                            useWorker: true
+                        });
+                        myConfetti({
+                            particleCount: 300,
+                            spread: 60,
+                            origin: { y: 0.6 }
+                        });
+                    }, time)
+                })
+            }
         }
     }
     setMultipleRandom = () => {
         let { listUserDivine, listCurrentUser, listWinner, currentPrize, listRandomNum, isClickedRoll, csvData } = this.state
         let listUser = []
+        let listTrueRandom = []
+        for (let i = 0; i < listUserDivine.length; i++) {
+            randomOrg.generateIntegers({ min: 1, max: listUserDivine[i].length - 1, n: 1 })
+                .then(function (result) {
+                    listTrueRandom[i] = result.random.data
+                });
+        }
         if (!isClickedRoll) {
             this.setState({ isClickedRoll: true })
             let intervalMultiple = setInterval(() => {
                 for (let i = 0; i < listUserDivine.length; i++) {
-                    let randomNum = Math.floor(Math.random() * listUserDivine[i].length)
+                    let randomNum = random.int(0, listUserDivine[i].length - 1)
                     let tmpData = listUserDivine[i][randomNum]
                     listCurrentUser[i] = tmpData
                     listRandomNum[i] = randomNum
@@ -177,12 +232,12 @@ export default class Lottery extends Component {
             setTimeout(() => {
                 clearInterval(intervalMultiple)
                 for (let i = 0; i < listUserDivine.length; i++) {
+                    listCurrentUser[i] = listUserDivine[i][listTrueRandom[i]]
                     listWinner[currentPrize].push(listCurrentUser[i])
-                    listUserDivine[i].splice(listRandomNum[i], 1)
+                    listUserDivine[i].splice(listTrueRandom[i], 1)
                     listUser = listUser.concat(listUserDivine[i])
                 }
-                console.log(listWinner)
-                this.setState({ listWinner, intervalMultiple: "", listUserDivine, listUser, isClickedRoll: false })
+                this.setState({ listCurrentUser, listWinner, intervalMultiple: "", listUserDivine, listUser, isClickedRoll: false })
                 let myCanvas = document.getElementById('fireWork')
                 let myConfetti = confetti.create(myCanvas, {
                     resize: true,
@@ -193,7 +248,7 @@ export default class Lottery extends Component {
                     spread: 60,
                     origin: { y: 0.6 }
                 });
-            }, 3000)
+            }, 5000)
         }
     }
     handleClickPrize = (e) => {
@@ -228,7 +283,8 @@ export default class Lottery extends Component {
         linkElement.click();
     }
     render() {
-        const { reward, currentUser, currentPrize, interval, listWinner, listCurrentUser, isClickedRoll, intervalMultiple, csvData } = this.state
+        const { speedAutoPlay, listUser, reward, autoPlay, currentUser, currentPrize, interval, listWinner, listCurrentUser, isClickedRoll, intervalMultiple, csvData } = this.state
+
         return (
             <div className="container-fluid" style={{ background: "url('/images/background.webp')", minHeight: "100vh" }}>
                 <audio style={{ display: "none" }} src="/background.mp3" autoPlay={true}></audio>
@@ -238,7 +294,7 @@ export default class Lottery extends Component {
                             <img src="/images/background-list.png" alt="" style={{ position: "absolute", width: " 100%", height: "100%" }} />
                             <h3 className="text-center" style={{ padding: "10px" }}>
                                 Danh sách giải thưởng
-                          </h3>
+                            </h3>
                             <div className="sb sb-2">
                                 <small>section break 2</small>
                                 <hr className="section-break-2" />
@@ -266,7 +322,7 @@ export default class Lottery extends Component {
                         <Paper style={{ backgroundColor: "rgb(255,227,229)", height: "100%", backgroundImage: "url('/images/background-roll.png')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
                             <img src="/images/background2.webp" alt="" style={{ width: "200px", position: "absolute" }} />
                             <div style={{ width: "100%", paddingTop: "200px", textAlign: "center" }}>
-                                {currentPrize < 3 ?
+                                {currentPrize !== -1 ? currentPrize < 3 ?
                                     <>
                                         <TransitionGroup>
                                             <CSSTransition
@@ -296,7 +352,23 @@ export default class Lottery extends Component {
                                         ))}
 
 
-                                    </div>}
+                                    </div>
+                                    :
+                                    <Swiper
+                                        freeMode={true}
+                                        loop={true}
+                                        speed={speedAutoPlay}
+                                        autoplay={autoPlay}
+                                        spaceBetween={0}
+                                        slidesPerView={4}
+                                    // onSlideChange={() => console.log('slide change')}
+                                    // onSwiper={(swiper) => console.log(swiper)}
+                                    >
+                                        {listUser.map((user, indexUser) => (
+                                            <SwiperSlide key={indexUser}> <img style={{ width: "100%", height: "150px" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + user.id + ".JPG"} alt="" /></SwiperSlide>
+                                        ))}
+                                    </Swiper>
+                                }
                             </div>
                             <div className={currentPrize < 3 ? "text-center absoluteMiddle" : "text-center"} style={currentPrize < 3 ? { bottom: "10em" } : { paddingBottom: "10em", paddingTop: "1em" }}>
                                 <Button style={{ padding: "1em 4em" }} disabled={isClickedRoll} variant="contained" color="secondary" onClick={currentPrize < 3 ? this.setRandom : this.setMultipleRandom}>Roll</Button>
