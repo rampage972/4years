@@ -5,12 +5,13 @@ import SwiperCore, { Autoplay } from 'swiper';
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
-import { Button, Collapse, List, ListItem, ListItemText, Paper } from '@material-ui/core';
+import { Button, Collapse, List, ListItem, ListItemText, Paper, Tab, Tabs } from '@material-ui/core';
 import { faDollarSign, faMoneyBillWave } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import userName from './nameMapping.json'
 // Import Swiper styles
 import 'swiper/swiper.scss';
+import Wheel from './Wheel';
 const confetti = require('canvas-confetti')
 const random = require('random')
 const RandomOrg = require('random-org');
@@ -20,6 +21,8 @@ export default class Lottery extends Component {
     constructor() {
         super()
         this.state = {
+            womenDayPrize: ['Pizzas', 'Sandwiches', 'Salads', 'Soup', 'Japanese food', 'Pastas'],
+            typeOfRoll: 0,
             speedAutoPlay: 100,
             autoPlay: { delay: 0 },
             csvData: [
@@ -55,7 +58,7 @@ export default class Lottery extends Component {
             interval: "",
             intervalMultiple: "",
             currentPosition: 1,
-            currentPrize: 0,
+            currentPrize: 5,
             listWinner: [[], [], [], [], [], []],
             listRandomNum: [],
             reward: [
@@ -251,6 +254,9 @@ export default class Lottery extends Component {
             }, 5000)
         }
     }
+    setRandomPrize = () => {
+        console.log("RUN")
+    }
     handleClickPrize = (e) => {
         let { reward, interval } = this.state
         if (!reward[e].isChoosen && interval == "") {
@@ -282,47 +288,69 @@ export default class Lottery extends Component {
         linkElement.setAttribute('download', exportFileDefaultName);
         linkElement.click();
     }
+    handleChangeTypeOfRoll = (e, value) => {
+        this.setState({ typeOfRoll: value })
+    }
+    handleSelectWomenPrize = (prize) => {
+        console.log(prize)
+    }
     render() {
-        const { speedAutoPlay, listUser, reward, autoPlay, currentUser, currentPrize, interval, listWinner, listCurrentUser, isClickedRoll, intervalMultiple, csvData } = this.state
+        const { speedAutoPlay, listUser, reward, autoPlay, currentUser, womenDayPrize,
+            currentPrize, interval, listWinner, listCurrentUser, isClickedRoll, intervalMultiple, typeOfRoll } = this.state
 
         return (
             <div className="container-fluid" style={{ background: "url('/images/background.webp')", minHeight: "100vh" }}>
                 <audio style={{ display: "none" }} src="/background.mp3" autoPlay={true}></audio>
                 <div className="row pt-5">
-                    <div className="col-md-3">
+                    <div className="col-md-3" style={{ height: "85vh" }}>
                         <Paper style={{ height: "100%", position: "relative" }}>
+                            <Tabs
+                                centered
+                                value={typeOfRoll}
+                                indicatorColor="secondary"
+                                textColor="secondary"
+                                onChange={this.handleChangeTypeOfRoll}
+                                aria-label="disabled tabs example"
+                            >
+                                <Tab label="Theo Giải" />
+                                <Tab label="Theo Người" />
+                            </Tabs>
                             <img src="/images/background-list.png" alt="" style={{ position: "absolute", width: " 100%", height: "100%" }} />
-                            <h3 className="text-center" style={{ padding: "10px" }}>
-                                Danh sách giải thưởng
-                            </h3>
-                            <div className="sb sb-2">
-                                <small>section break 2</small>
-                                <hr className="section-break-2" />
-                            </div>
-                            <div style={{ padding: "10px" }}>
-                                {reward.map((item, key) => (
-                                    <Paper key={key} className={item.isChoosen ? "mb-2 border-Paper" : "mb-2"} elevation={item.isChoosen ? 4 : 1} onClick={() => this.handleClickPrize(key)} style={{ cursor: "pointer" }}>
-                                        <div className="row">
-                                            <div className="col-md-3 content-middle">
-                                                <img style={{ width: "100%" }} src={"/rewardIcon/" + (key + 1) + ".png"} alt="" />
-                                            </div>
-                                            <div className="col-md-9">
-                                                <h2>{item.name}</h2>
-                                                <span style={{ color: "green" }}><FontAwesomeIcon icon={faMoneyBillWave} /> {item.prize.toLocaleString('ja-JP') + " VNĐ"}</span>
-                                                <span style={{ paddingLeft: "1em", color: "red", fontWeight: "bold" }}>{listWinner[key].length + "/" + item.numberOfPrize}</span>
-                                            </div>
-                                        </div>
-                                    </Paper>
-                                ))}
+                            {typeOfRoll == 0 ?
+                                <div >
 
-                            </div>
+                                    <h3 className="text-center position-relative" style={{ padding: "10px" }}>
+                                        Danh sách giải thưởng
+                            </h3>
+                                    <div className="sb sb-2">
+                                        <small>section break 2</small>
+                                        <hr className="section-break-2" />
+                                    </div>
+                                    <div style={{ padding: "10px" }}>
+                                        {reward.map((item, key) => (
+                                            <Paper key={key} className={item.isChoosen ? "mb-2 border-Paper" : "mb-2"} elevation={item.isChoosen ? 4 : 1} onClick={() => this.handleClickPrize(key)} style={{ cursor: "pointer" }}>
+                                                <div className="row">
+                                                    <div className="col-md-3 content-middle">
+                                                        <img style={{ width: "100%" }} src={"/rewardIcon/" + (key + 1) + ".png"} alt="" />
+                                                    </div>
+                                                    <div className="col-md-9">
+                                                        <h2>{item.name}</h2>
+                                                        <span style={{ color: "green" }}><FontAwesomeIcon icon={faMoneyBillWave} /> {item.prize.toLocaleString('ja-JP') + " VNĐ"}</span>
+                                                        <span style={{ paddingLeft: "1em", color: "red", fontWeight: "bold" }}>{listWinner[key].length + "/" + item.numberOfPrize}</span>
+                                                    </div>
+                                                </div>
+                                            </Paper>
+                                        ))}
+                                    </div>
+                                </div>
+                                : null}
                         </Paper>
                     </div>
                     <div className="col-md-6" >
                         <Paper style={{ backgroundColor: "rgb(255,227,229)", height: "100%", backgroundImage: "url('/images/background-roll.png')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
-                            <img src="/images/background2.webp" alt="" style={{ width: "200px", position: "absolute" }} />
-                            <div style={{ width: "100%", paddingTop: "200px", textAlign: "center" }}>
-                                {currentPrize !== -1 ? currentPrize < 3 ?
+                            <img src="/images/banner.png" alt="" style={{ width: "200px", position: "absolute", right: "0" }} />
+                            <div style={typeOfRoll == 0 ? { width: "100%", paddingTop: "200px", textAlign: "center" } : { position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
+                                {typeOfRoll == 0 ? currentPrize !== -1 ? currentPrize < 3 ?
                                     <>
                                         <TransitionGroup>
                                             <CSSTransition
@@ -368,11 +396,12 @@ export default class Lottery extends Component {
                                             <SwiperSlide key={indexUser}> <img style={{ width: "100%", height: "150px" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + user.id + ".JPG"} alt="" /></SwiperSlide>
                                         ))}
                                     </Swiper>
-                                }
+                                    : <Wheel items={womenDayPrize} onSelectItem={(prize)=>this.handleSelectWomenPrize(prize)}/>}
                             </div>
-                            <div className={currentPrize < 3 ? "text-center absoluteMiddle" : "text-center"} style={currentPrize < 3 ? { bottom: "10em" } : { paddingBottom: "10em", paddingTop: "1em" }}>
-                                <Button style={{ padding: "1em 4em" }} disabled={isClickedRoll} variant="contained" color="secondary" onClick={currentPrize < 3 ? this.setRandom : this.setMultipleRandom}>Roll</Button>
-                            </div>
+                            {typeOfRoll == 0 ?
+                                <div className={currentPrize < 3 ? "text-center absoluteMiddle" : "text-center"} style={currentPrize < 3 ? { bottom: "10em" } : { marginTop: "2em" }}>
+                                    <Button style={{ padding: "1em 4em" }} disabled={isClickedRoll} variant="contained" color="secondary" onClick={currentPrize < 3 ? this.setRandom : this.setMultipleRandom}>Roll</Button>
+                                </div> : null}
                         </Paper>
                     </div>
                     <div className="col-md-3">
