@@ -13,19 +13,16 @@ export default class Wheel extends React.Component {
     }
 
     selectItem() {
-        let self= this
-        if (this.state.selectedItem === null) {
-            let selectedItem
-            randomOrg.generateIntegers({ min: 1, max: this.props.items.length - 1, n: 1 })
-                .then(function (result) {
-                    selectedItem = result.random.data
-                    self.setState({ selectedItem})
-                    self.props.onSelectItem(selectedItem)
-                });
-        } else {
-            this.setState({ selectedItem: null });
-            setTimeout(this.selectItem, 2000);
-        }
+        let self = this
+        this.setState({ selectedItem: null })
+        let selectedItem
+        randomOrg.generateIntegers({ min: 1, max: this.props.items.length - 1, n: 1 })
+            .then(function (result) {
+                selectedItem = result.random.data
+                self.setState({ selectedItem })
+                self.props.onSelectItem(selectedItem)
+            });
+
     }
 
     render() {

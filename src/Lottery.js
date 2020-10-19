@@ -5,11 +5,11 @@ import SwiperCore, { Autoplay } from 'swiper';
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
-import { Button, Collapse, List, ListItem, ListItemText, Paper, Tab, Tabs } from '@material-ui/core';
+import { Button, Collapse, List, ListItem, ListItemText, Paper, Tab, Tabs, TableBody, TableCell, TableRow, TableHead, Table, TableContainer } from '@material-ui/core';
 import { faDollarSign, faMoneyBillWave } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import userName from './nameMapping.json'
-// Import Swiper styles
+import MaterialTable from "material-table";
 import 'swiper/swiper.scss';
 import Wheel from './Wheel';
 const confetti = require('canvas-confetti')
@@ -21,7 +21,11 @@ export default class Lottery extends Component {
     constructor() {
         super()
         this.state = {
+            rollMode: 0,
+            listWomen: ["Đỗ Tố Quỳnh", "Nguyễn Thị Hảo", "Liêu Thị Thảo", "Lê Thị Thu Trang", "Lê Thị Hồng Vân", "Nguyễn Thị Ngọc Linh", "Bùi Mỹ Huyền", "Nguyễn Lê Giang", "Nguyễn Thị Kim Uyên", "Võ Thị Cẩm Tú", "Nguyễn Thị Minh Hoài", "Nguyễn Thị Thanh Tuyền", "Đinh Thị Thu Hiền", "Trần Thị Hiền", "Đinh Thị Nhàn", "Phùng Thị Khánh Linh", "Đinh Thị Ngọc Mai", "Hồ Thị Thúy Hà", "Nguyễn Thị Tuyền", "Đỗ Thị Ngọc Anh", "Nguyễn Thu Huyền", "Trần Thị Thảo", "Đoàn Thanh Tâm", "Phó Thị Vân Anh", "Nguyễn Thị Huyền Anh", "Đào Bích Phương", "Hoàng Thị Hải", "Đỗ Thị Hằng", "Nguyễn Thị Trâm", "Nguyễn Thị Chúc", "Tống Thị Thu Nga", "Trần Thị Thúy Hằng", "Vương Thị Huyền", "Bùi Thu Yến", "Nguyễn Thị Phương Hà", "Triệu Thị Trinh", "Nguyễn Quỳnh Anh", "Nguyễn Thị Kiều Chinh", "Nguyễn Thùy Duyên", "Lê Thị Thùy", "Nguyễn Thị Loan"],
             womenDayPrize: ['Pizzas', 'Sandwiches', 'Salads', 'Soup', 'Japanese food', 'Pastas'],
+            listWomenPrize: [],
+            currentIndexWomen: 0,
             typeOfRoll: 0,
             speedAutoPlay: 100,
             autoPlay: { delay: 0 },
@@ -138,11 +142,18 @@ export default class Lottery extends Component {
         // this.setMultipleRandom()
     }
     my_onkeydown_handler = (event) => {
+        console.log(event.keyCode)
         switch (event.keyCode) {
             case 116: // 'F5'
                 event.preventDefault();
                 // event.keyCode = 0;
                 window.status = "F5 disabled";
+                break;
+            case 89: // 'Y'
+                let { rollMode } = this.state
+                if (rollMode == 0) rollMode = 1
+                else rollMode = 0
+                this.setState({ rollMode, currentPrize: 0 })
                 break;
         }
     }
@@ -292,61 +303,95 @@ export default class Lottery extends Component {
         this.setState({ typeOfRoll: value })
     }
     handleSelectWomenPrize = (prize) => {
-        console.log(prize)
+        let { currentIndexWomen, listWomenPrize, listWomen, womenDayPrize } = this.state
+        let tmpWinner = {
+            name: listWomen[currentIndexWomen],
+            prize: womenDayPrize[prize[0]]
+        }
+        listWomenPrize.push(tmpWinner)
+        currentIndexWomen++
+        setTimeout(() => {
+
+            this.setState({ listWomenPrize, currentIndexWomen })
+        }, 5000)
     }
     render() {
-        const { speedAutoPlay, listUser, reward, autoPlay, currentUser, womenDayPrize,
+        const { speedAutoPlay, listUser, reward, autoPlay, currentUser, womenDayPrize, listWomenPrize, rollMode,
             currentPrize, interval, listWinner, listCurrentUser, isClickedRoll, intervalMultiple, typeOfRoll } = this.state
 
         return (
             <div className="container-fluid" style={{ background: "url('/images/background.webp')", minHeight: "100vh" }}>
                 <audio style={{ display: "none" }} src="/background.mp3" autoPlay={true}></audio>
                 <div className="row pt-5">
-                    <div className="col-md-3" style={{ height: "85vh" }}>
-                        <Paper style={{ height: "100%", position: "relative" }}>
-                            <Tabs
-                                centered
-                                value={typeOfRoll}
-                                indicatorColor="secondary"
-                                textColor="secondary"
-                                onChange={this.handleChangeTypeOfRoll}
-                                aria-label="disabled tabs example"
-                            >
-                                <Tab label="Theo Giải" />
-                                <Tab label="Theo Người" />
-                            </Tabs>
-                            <img src="/images/background-list.png" alt="" style={{ position: "absolute", width: " 100%", height: "100%" }} />
-                            {typeOfRoll == 0 ?
-                                <div >
+                    <div className={typeOfRoll == 0 ? "col-md-3" : "col-md-5"} style={{ height: "85vh" }}>
+                        {rollMode == 0 ?
+                            <Paper style={{ height: "100%", position: "relative" }}>
+                                <Tabs
+                                    centered
+                                    value={typeOfRoll}
+                                    indicatorColor="secondary"
+                                    textColor="secondary"
+                                    onChange={this.handleChangeTypeOfRoll}
+                                    aria-label="disabled tabs example"
+                                >
+                                    <Tab label="Theo Giải" />
+                                    <Tab label="Theo Người" />
+                                </Tabs>
+                                <img src="/images/background-list.png" alt="" style={{ position: "absolute", width: " 100%", height: "100%" }} />
+                                {typeOfRoll == 0 ?
+                                    <div >
 
-                                    <h3 className="text-center position-relative" style={{ padding: "10px" }}>
-                                        Danh sách giải thưởng
+                                        <h3 className="text-center position-relative" style={{ padding: "10px" }}>
+                                            Danh sách giải thưởng
                             </h3>
-                                    <div className="sb sb-2">
-                                        <small>section break 2</small>
-                                        <hr className="section-break-2" />
-                                    </div>
-                                    <div style={{ padding: "10px" }}>
-                                        {reward.map((item, key) => (
-                                            <Paper key={key} className={item.isChoosen ? "mb-2 border-Paper" : "mb-2"} elevation={item.isChoosen ? 4 : 1} onClick={() => this.handleClickPrize(key)} style={{ cursor: "pointer" }}>
-                                                <div className="row">
-                                                    <div className="col-md-3 content-middle">
-                                                        <img style={{ width: "100%" }} src={"/rewardIcon/" + (key + 1) + ".png"} alt="" />
+                                        <div className="sb sb-2">
+                                            <small>section break 2</small>
+                                            <hr className="section-break-2" />
+                                        </div>
+                                        <div style={{ padding: "10px" }}>
+                                            {reward.map((item, key) => (
+                                                <Paper key={key} className={item.isChoosen ? "mb-2 border-Paper" : "mb-2"} elevation={item.isChoosen ? 4 : 1} onClick={() => this.handleClickPrize(key)} style={{ cursor: "pointer" }}>
+                                                    <div className="row">
+                                                        <div className="col-md-3 content-middle">
+                                                            <img style={{ width: "100%" }} src={"/rewardIcon/" + (key + 1) + ".png"} alt="" />
+                                                        </div>
+                                                        <div className="col-md-9">
+                                                            <h2>{item.name}</h2>
+                                                            <span style={{ color: "green" }}><FontAwesomeIcon icon={faMoneyBillWave} /> {item.prize.toLocaleString('ja-JP') + " VNĐ"}</span>
+                                                            <span style={{ paddingLeft: "1em", color: "red", fontWeight: "bold" }}>{listWinner[key].length + "/" + item.numberOfPrize}</span>
+                                                        </div>
                                                     </div>
-                                                    <div className="col-md-9">
-                                                        <h2>{item.name}</h2>
-                                                        <span style={{ color: "green" }}><FontAwesomeIcon icon={faMoneyBillWave} /> {item.prize.toLocaleString('ja-JP') + " VNĐ"}</span>
-                                                        <span style={{ paddingLeft: "1em", color: "red", fontWeight: "bold" }}>{listWinner[key].length + "/" + item.numberOfPrize}</span>
-                                                    </div>
-                                                </div>
-                                            </Paper>
-                                        ))}
+                                                </Paper>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
-                                : null}
-                        </Paper>
+                                    :
+                                    <div className="position-relative mt-3">
+                                        <TableContainer component={Paper}>
+                                            <Table aria-label="simple table" className="table mb-0 table-striped">
+                                                <TableHead>
+                                                    <TableRow>
+                                                        <TableCell align="center" style={{ fontWeight: "bold", fontSize: "2em" }}>Họ Và Tên</TableCell>
+                                                        <TableCell align="center" style={{ fontWeight: "bold", fontSize: "2em" }}>Giải Thưởng</TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    {listWomenPrize.map((itemWomenPrize, keyItemWomenPrize) => (
+                                                        <TableRow key={keyItemWomenPrize}>
+                                                            <TableCell component="th" scope="row" align="center">
+                                                                {itemWomenPrize.name}
+                                                            </TableCell>
+                                                            <TableCell align="center">{itemWomenPrize.prize}</TableCell>
+                                                        </TableRow>
+                                                    ))}
+                                                </TableBody>
+                                            </Table>
+                                        </TableContainer>
+                                    </div>
+                                }
+                            </Paper> : null}
                     </div>
-                    <div className="col-md-6" >
+                    <div className={ typeOfRoll == 0 ? "col-md-6" : "col-md-7"} style={{ height: "85vh" }}>
                         <Paper style={{ backgroundColor: "rgb(255,227,229)", height: "100%", backgroundImage: "url('/images/background-roll.png')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
                             <img src="/images/banner.png" alt="" style={{ width: "200px", position: "absolute", right: "0" }} />
                             <div style={typeOfRoll == 0 ? { width: "100%", paddingTop: "200px", textAlign: "center" } : { position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
@@ -396,7 +441,7 @@ export default class Lottery extends Component {
                                             <SwiperSlide key={indexUser}> <img style={{ width: "100%", height: "150px" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + user.id + ".JPG"} alt="" /></SwiperSlide>
                                         ))}
                                     </Swiper>
-                                    : <Wheel items={womenDayPrize} onSelectItem={(prize)=>this.handleSelectWomenPrize(prize)}/>}
+                                    : <Wheel items={womenDayPrize} onSelectItem={(prize) => this.handleSelectWomenPrize(prize)} />}
                             </div>
                             {typeOfRoll == 0 ?
                                 <div className={currentPrize < 3 ? "text-center absoluteMiddle" : "text-center"} style={currentPrize < 3 ? { bottom: "10em" } : { marginTop: "2em" }}>
@@ -404,56 +449,58 @@ export default class Lottery extends Component {
                                 </div> : null}
                         </Paper>
                     </div>
-                    <div className="col-md-3">
-                        <Paper style={{ height: "100%", position: "relative" }}>
-                            <div style={{ backgroundImage: "url('/images/confetti.gif')" }}>
+                    {typeOfRoll == 0 ?
+                        <div className="col-md-3">
+                            {rollMode == 0 ?
+                                <Paper style={{ height: "100%", position: "relative" }}>
+                                    <div style={{ backgroundImage: "url('/images/confetti.gif')" }}>
 
-                                {/* <img src="/images/confetti.gif" alt="" style={{ width: "100%", position: "absolute" }} />
+                                        {/* <img src="/images/confetti.gif" alt="" style={{ width: "100%", position: "absolute" }} />
                                 <img src="/images/confetti-flag.png" alt="" style={{ width: "100%", position: "absolute" }} /> */}
-                                <h3 className="text-center" style={{ padding: "10px" }}>
-                                    Danh sách trúng giải
+                                        <h3 className="text-center" style={{ padding: "10px" }}>
+                                            Danh sách trúng giải
                             </h3>
-                            </div>
-                            <div className="sb sb-2">
-                                <small>section break 2</small>
-                                <hr className="section-break-2" />
-                            </div>
-                            <div>
+                                    </div>
+                                    <div className="sb sb-2">
+                                        <small>section break 2</small>
+                                        <hr className="section-break-2" />
+                                    </div>
+                                    <div>
 
-                                <List
-                                    component="nav"
-                                >
-                                    {listWinner.map((item, key) => {
-                                        if (item.length > 0)
-                                            return (
-                                                <div key={key}>
-                                                    <ListItem button key={key} onClick={() => this.explanWinner(key)}>
-                                                        <ListItemText className="listPrizeName" primary={reward[key].name} />
-                                                        {item.isOpen ? <ExpandLess /> : <ExpandMore />}
-                                                    </ListItem>
-                                                    <Collapse in={item.isOpen} timeout="auto" unmountOnExit>
-                                                        <List component="div" disablePadding>
-                                                            <ListItem style={{ flexWrap: "wrap", width: "100%" }}>
-                                                                {item.map((user, index) => (
-                                                                    <div key={index}>
-                                                                        <img title={user.rawName} key={index} style={{ width: "60px", height: "75px" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + user.id + ".JPG"} alt="" />
-                                                                    </div>
-                                                                ))}
+                                        <List
+                                            component="nav"
+                                        >
+                                            {listWinner.map((item, key) => {
+                                                if (item.length > 0)
+                                                    return (
+                                                        <div key={key}>
+                                                            <ListItem button key={key} onClick={() => this.explanWinner(key)}>
+                                                                <ListItemText className="listPrizeName" primary={reward[key].name} />
+                                                                {item.isOpen ? <ExpandLess /> : <ExpandMore />}
                                                             </ListItem>
-                                                        </List>
-                                                    </Collapse>
-                                                </div>)
+                                                            <Collapse in={item.isOpen} timeout="auto" unmountOnExit>
+                                                                <List component="div" disablePadding>
+                                                                    <ListItem style={{ flexWrap: "wrap", width: "100%" }}>
+                                                                        {item.map((user, index) => (
+                                                                            <div key={index}>
+                                                                                <img title={user.rawName} key={index} style={{ width: "60px", height: "75px" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + user.id + ".JPG"} alt="" />
+                                                                            </div>
+                                                                        ))}
+                                                                    </ListItem>
+                                                                </List>
+                                                            </Collapse>
+                                                        </div>)
 
 
-                                    }
-                                    )}
-                                </List>
-                                <div className="text-center">
-                                    <Button variant="contained" color="primary" onClick={this.exportToJsonFile}>Export dữ liệu trúng thưởng</Button>
-                                </div>
-                            </div>
-                        </Paper>
-                    </div>
+                                            }
+                                            )}
+                                        </List>
+                                        <div className="text-center">
+                                            <Button variant="contained" color="primary" onClick={this.exportToJsonFile}>Export dữ liệu trúng thưởng</Button>
+                                        </div>
+                                    </div>
+                                </Paper> : null}
+                        </div> : null}
                 </div>
             </div>
         )
