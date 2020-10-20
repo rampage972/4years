@@ -16,7 +16,7 @@ export default class Wheel extends React.Component {
         let self = this
         this.setState({ selectedItem: null })
         let selectedItem
-        randomOrg.generateIntegers({ min: 1, max: this.props.items.length - 1, n: 1 })
+        randomOrg.generateIntegers({ min: 1, max: this.props.items.length, n: 1 })
             .then(function (result) {
                 selectedItem = result.random.data
                 self.setState({ selectedItem })
