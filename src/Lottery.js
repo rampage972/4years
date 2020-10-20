@@ -379,20 +379,9 @@ export default class Lottery extends Component {
             <div className="container-fluid" style={{ background: "url('/images/background.webp')", minHeight: "100vh" }}>
                 <audio style={{ display: "none" }} src="/background.mp3" autoPlay={true}></audio>
                 <div className="row pt-5">
-                    <div className={typeOfRoll == 0 ? "col-md-3" : "col-md-5"} style={{ height: "85vh" }}>
+                    <div className={"col-md-3"} style={{ height: "85vh" }}>
                         {rollMode == 0 ?
                             <Paper style={{ height: "100%", position: "relative" }}>
-                                <Tabs
-                                    centered
-                                    value={typeOfRoll}
-                                    indicatorColor="secondary"
-                                    textColor="secondary"
-                                    onChange={this.handleChangeTypeOfRoll}
-                                    aria-label="disabled tabs example"
-                                >
-                                    <Tab label="Theo Giải" />
-                                    <Tab label="Theo Người" />
-                                </Tabs>
                                 <img src="/images/background-list.png" alt="" style={{ position: "absolute", width: " 100%", height: "100%" }} />
                                 {typeOfRoll == 0 ?
                                     <div >
@@ -450,8 +439,20 @@ export default class Lottery extends Component {
                     {rollMode == 0 ? listUser.map((currentUser, index) => (
                         <img style={{ display: "none" }} key={index} src={"/images/WomenDay/" + currentUser.id + ".JPG"} alt="" />
                     )) : null}
-                    <div className={typeOfRoll == 0 ? "col-md-6" : "col-md-7"} style={{ height: "85vh" }}>
+                    <div className={"col-md-6"} style={{ height: "85vh" }}>
                         <Paper style={{ backgroundColor: "rgb(255,227,229)", height: "100%", backgroundImage: "url('/images/background-roll.png')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
+                            {rollMode == 1 ?
+                                <Tabs
+                                    centered
+                                    value={typeOfRoll}
+                                    indicatorColor="secondary"
+                                    textColor="secondary"
+                                    onChange={this.handleChangeTypeOfRoll}
+                                    aria-label="disabled tabs example"
+                                >
+                                    <Tab label="Theo Giải" />
+                                    <Tab label="Theo Người" />
+                                </Tabs> : null}
                             <img src="/images/banner.png" alt="" style={{ width: "200px", position: "absolute", right: "0" }} />
                             <div style={typeOfRoll == 0 ? { width: "100%", paddingTop: "200px", textAlign: "center" } : { position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
                                 {typeOfRoll == 0 ? currentPrize !== -1 ? currentPrize < 3 ?
@@ -493,6 +494,7 @@ export default class Lottery extends Component {
                                         speed={speedAutoPlay}
                                         autoplay={autoPlay}
                                         spaceBetween={0}
+
                                         slidesPerView={4}
                                     // onSlideChange={() => console.log('slide change')}
                                     // onSwiper={(swiper) => console.log(swiper)}
