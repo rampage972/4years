@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './Wheel.css';
+// import './Wheel.css'
 const RandomOrg = require('random-org');
 const randomOrg = new RandomOrg({ apiKey: 'b558199b-0a92-43cb-991b-23551659a901' });
 export default class Wheel extends React.Component {
