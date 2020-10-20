@@ -448,9 +448,10 @@ export default class Lottery extends Component {
                                 }
                             </Paper> : null}
                     </div>
-                    {rollMode == 0 ? listUser.map((currentUser, index) => (
+                    {rollMode == 1 ? listUser.map((currentUser, index) => (
                         <img style={{ display: "none" }} key={index} src={process.env.PUBLIC_URL + "/images/WomenDay/" + currentUser.id + ".JPG"} alt="" />
                     )) : null}
+                     <img style={{ display: "none" }} src={process.env.PUBLIC_URL + "/images/WomenDay/1.JPG"} alt="" />
                     <div className={"col-md-6"} style={{ height: "85vh" }}>
                         <Paper style={{ backgroundColor: "rgb(255,227,229)", height: "100%", backgroundImage: "url('/images/background-roll.png')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
                             {rollMode == 1 ?
