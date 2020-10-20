@@ -178,9 +178,9 @@ export default class Lottery extends Component {
         let { listUser, listWinner, currentPrize, isClickedRoll } = this.state
         let randomNumber
         let trullyRandomNumber
-        randomOrg.generateIntegers({ min: 1, max: listUser.length - 1, n: 1 })
+        randomOrg.generateIntegers({ min: 0, max: listUser.length - 1, n: 1 })
             .then(function (result) {
-                trullyRandomNumber = result.random.data
+                trullyRandomNumber = result.random.data[0]
             });
         if (!isClickedRoll) {
             this.setState({ isClickedRoll: true })
@@ -230,9 +230,9 @@ export default class Lottery extends Component {
         let { listUser, listWinner, currentPrize, isClickedRoll } = this.state
         let randomNumber
         let trullyRandomNumber
-        randomOrg.generateIntegers({ min: 1, max: listUser.length - 1, n: 1 })
+        randomOrg.generateIntegers({ min: 0, max: listUser.length - 1, n: 1 })
             .then(function (result) {
-                trullyRandomNumber = result.random.data
+                trullyRandomNumber = result.random.data[0]
             });
         if (!isClickedRoll) {
             this.setState({ isClickedRoll: true })
@@ -282,9 +282,9 @@ export default class Lottery extends Component {
         let listUser = []
         let listTrueRandom = []
         for (let i = 0; i < listUserDivine.length; i++) {
-            randomOrg.generateIntegers({ min: 1, max: listUserDivine[i].length - 1, n: 1 })
+            randomOrg.generateIntegers({ min: 0, max: listUserDivine[i].length - 1, n: 1 })
                 .then(function (result) {
-                    listTrueRandom[i] = result.random.data
+                    listTrueRandom[i] = result.random.data[0]
                 });
         }
         if (!isClickedRoll) {
@@ -525,7 +525,7 @@ export default class Lottery extends Component {
                             </div>
                             {typeOfRoll == 0 ?
                                 <div className={currentPrize < 3 ? "text-center absoluteMiddle" : "text-center"} style={currentPrize < 3 ? { bottom: "10em" } : { marginTop: "2em" }}>
-                                    <Button style={{ padding: "1em 4em" }} disabled={isClickedRoll} variant="contained" color="secondary" onClick={currentPrize < 3 ? this.setRandom : this.setMultipleRandom}>Roll</Button>
+                                    <Button style={{ padding: "1em 4em" }} disabled={isClickedRoll} variant="contained" color="secondary" onClick={rollMode == 0 ? currentPrize < 3 ? this.setRandom : this.setMultipleRandom : this.setWomenRandom}>Roll</Button>
                                 </div> : null}
                         </Paper>
                     </div>
