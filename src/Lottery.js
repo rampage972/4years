@@ -110,6 +110,7 @@ export default class Lottery extends Component {
                 ,
             ]
         }
+        this.listNameFileUpload = React.createRef()
     }
     handleChangeNumberOfRoll = () => {
 
@@ -379,6 +380,9 @@ export default class Lottery extends Component {
         reader.onerror = error => console.log(error)
         reader.readAsText(e.target.files[0])
     }
+    handleClickInputFile = () => {
+        this.listNameFileUpload.current.click()
+    }
     render() {
         const { speedAutoPlay, listUser, reward, autoPlay, currentUser, womenDayPrize, listWomenPrize, rollMode,
             currentPrize, interval, listWinner, listCurrentUser, isClickedRoll, intervalMultiple, typeOfRoll } = this.state
@@ -445,7 +449,7 @@ export default class Lottery extends Component {
                             </Paper> : null}
                     </div>
                     {rollMode == 0 ? listUser.map((currentUser, index) => (
-                        <img style={{ display: "none" }} key={index} src={"/images/WomenDay/" + currentUser.id + ".JPG"} alt="" />
+                        <img style={{ display: "none" }} key={index} src={process.env.PUBLIC_URL + "/images/WomenDay/" + currentUser.id + ".JPG"} alt="" />
                     )) : null}
                     <div className={"col-md-6"} style={{ height: "85vh" }}>
                         <Paper style={{ backgroundColor: "rgb(255,227,229)", height: "100%", backgroundImage: "url('/images/background-roll.png')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
@@ -465,7 +469,7 @@ export default class Lottery extends Component {
                                 </Paper>
                                 : null}
                             <img src="/images/banner.png" alt="" style={{ width: "200px", position: "absolute", right: "0" }} />
-                            <div style={typeOfRoll == 0 ? { width: "100%", paddingTop: "200px", textAlign: "center" } : { position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
+                            <div style={typeOfRoll == 0 ? { width: "100%", paddingTop: "200px", textAlign: "center" } : { textAlign: "center", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
                                 {typeOfRoll == 0 ? currentPrize !== -1 ? currentPrize < 3 ?
                                     <>
                                         <TransitionGroup>
@@ -475,12 +479,12 @@ export default class Lottery extends Component {
                                                 classNames="lottery-avatar"
                                             >
                                                 {rollMode == 0 ? <img className="moveToList" style={{ width: "200px", height: "260px" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".JPG"} alt="" />
-                                                    : <img className="moveToList" style={{ width: "200px", height: "260px" }} src={"/images/WomenDay/" + currentUser.id + ".JPG"} alt="" />}
+                                                    : <img className="moveToList" style={{ width: "200px", height: "260px" }} src={process.env.PUBLIC_URL + "/images/WomenDay/" + currentUser.id + ".JPG"} alt="" />}
                                             </CSSTransition>
                                         </TransitionGroup>
                                         <canvas id="fireWork"></canvas>
                                         {rollMode == 0 ? <img className="moveToList" title="Hello" style={{ width: "200px", height: "260px" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".JPG"} alt="" /> :
-                                            <img className="moveToList" title="Hello" style={{ width: "200px", height: "260px" }} src={"/images/WomenDay/" + currentUser.id + ".JPG"} alt="" />}
+                                            <img className="moveToList" title="Hello" style={{ width: "200px", height: "260px" }} src={process.env.PUBLIC_URL + "/images/WomenDay/" + currentUser.id + ".JPG"} alt="" />}
                                         {rollMode == 0 ? <p className="winnerName absoluteMiddle">{currentUser.rawName}</p> : null}
                                         {interval == "" && currentPrize < 2 && listWinner[currentPrize].length > 0 ?
                                             <img className="moveToList" src={"/images/frame" + (currentPrize) + ".png"} alt="" style={{ width: "200px", height: "260px", transform: "scale(1.2)" }} />
@@ -505,7 +509,6 @@ export default class Lottery extends Component {
                                         speed={speedAutoPlay}
                                         autoplay={autoPlay}
                                         spaceBetween={0}
-
                                         slidesPerView={4}
                                     // onSlideChange={() => console.log('slide change')}
                                     // onSwiper={(swiper) => console.log(swiper)}
@@ -516,8 +519,8 @@ export default class Lottery extends Component {
                                     </Swiper>
                                     : <>
                                         <Wheel items={womenDayPrize} onSelectItem={(prize) => this.handleSelectWomenPrize(prize)} />
-                                        <input type="file" onInput={this.handleInputListName} ref={this.listNameFileUpload} style={{display:"none"}}/>
-                                        <FontAwesomeIcon icon={faCloudUploadAlt} style={{color:"pink"}} onClick={this.listNameFileUpload.current.click()}/>
+                                        <input type="file" onInput={this.handleInputListName} ref={this.listNameFileUpload} style={{ display: "none" }} />
+                                        <FontAwesomeIcon icon={faCloudUploadAlt} style={{ bottom: 0, fontSize: "30px", cursor: "pointer" }} onClick={this.handleClickInputFile} />
                                     </>}
                             </div>
                             {typeOfRoll == 0 ?
