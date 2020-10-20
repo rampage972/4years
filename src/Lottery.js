@@ -133,7 +133,7 @@ export default class Lottery extends Component {
         // //     console.log(mordermRand)
         // // }, 10000)
         let { listUser, currentUser, listWinner, currentPrize } = this.state
-        listUser = userName
+
         this.setState({ listUser, listWinner })
     }
     componentDidMount = () => {
@@ -150,10 +150,15 @@ export default class Lottery extends Component {
                 window.status = "F5 disabled";
                 break;
             case 89: // 'Y'
-                let { rollMode } = this.state
+                let { rollMode, listUser } = this.state
                 if (rollMode == 0) rollMode = 1
                 else rollMode = 0
-                this.setState({ rollMode, currentPrize: 0 })
+                for (let i = 1; i <= 9; i++) {
+                    listUser.push({
+                        id: i
+                    })
+                }
+                this.setState({ rollMode, currentPrize: 0, listUser })
                 break;
         }
     }
@@ -199,12 +204,63 @@ export default class Lottery extends Component {
                 }, 100)
                 this.setState({ interval }, () => {
                     let time = 6000
-                    if (currentPrize == 0) time = 10000
+                    if (currentPrize == 0) time = 7000
                     setTimeout(() => {
                         clearInterval(this.state.interval)
                         this.setState({ currentUser: listUser[trullyRandomNumber], currentPosition: trullyRandomNumber })
                         listWinner[currentPrize].push(listUser[trullyRandomNumber])
                         listUser.splice(trullyRandomNumber, 1)
+                        this.setState({ listWinner, listUser, interval: "", isClickedRoll: false })
+                        let myCanvas = document.getElementById('fireWork')
+                        let myConfetti = confetti.create(myCanvas, {
+                            resize: true,
+                            useWorker: true
+                        });
+                        myConfetti({
+                            particleCount: 300,
+                            spread: 60,
+                            origin: { y: 0.6 }
+                        });
+                    }, time)
+                })
+            }
+        }
+    }
+    setWomenRandom = () => {
+        let { listUser, listWinner, currentPrize, isClickedRoll } = this.state
+        let randomNumber
+        let trullyRandomNumber
+        randomOrg.generateIntegers({ min: 1, max: listUser.length - 1, n: 1 })
+            .then(function (result) {
+                trullyRandomNumber = result.random.data
+            });
+        if (!isClickedRoll) {
+            this.setState({ isClickedRoll: true })
+            // if (currentPrize == 0) {
+            //     setTimeout(() => {
+            //       let intervalAutoPlay=  setInterval(() => {
+            //             let { speedAutoPlay } = this.state
+            //             speedAutoPlay += 10
+            //             this.setState({ speedAutoPlay })
+
+            //         },100)
+            //         setTimeout
+            //     }, 2000)
+            // }
+            // else 
+            {
+
+                let interval = setInterval(() => {
+                    randomNumber = [random.int(0, listUser.length - 1)]
+                    this.setState({ currentUser: listUser[randomNumber], currentPosition: randomNumber })
+                }, 100)
+                this.setState({ interval }, () => {
+                    let time = 6000
+                    if (currentPrize == 0) time = 10000
+                    setTimeout(() => {
+                        clearInterval(this.state.interval)
+                        this.setState({ currentUser: listUser[trullyRandomNumber], currentPosition: trullyRandomNumber })
+                        listWinner[currentPrize].push(listUser[trullyRandomNumber])
                         this.setState({ listWinner, listUser, interval: "", isClickedRoll: false })
                         let myCanvas = document.getElementById('fireWork')
                         let myConfetti = confetti.create(myCanvas, {
@@ -391,7 +447,10 @@ export default class Lottery extends Component {
                                 }
                             </Paper> : null}
                     </div>
-                    <div className={ typeOfRoll == 0 ? "col-md-6" : "col-md-7"} style={{ height: "85vh" }}>
+                    {rollMode == 0 ? listUser.map((currentUser, index) => (
+                        <img style={{ display: "none" }} key={index} src={"/images/WomenDay/" + currentUser.id + ".JPG"} alt="" />
+                    )) : null}
+                    <div className={typeOfRoll == 0 ? "col-md-6" : "col-md-7"} style={{ height: "85vh" }}>
                         <Paper style={{ backgroundColor: "rgb(255,227,229)", height: "100%", backgroundImage: "url('/images/background-roll.png')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
                             <img src="/images/banner.png" alt="" style={{ width: "200px", position: "absolute", right: "0" }} />
                             <div style={typeOfRoll == 0 ? { width: "100%", paddingTop: "200px", textAlign: "center" } : { position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
@@ -403,17 +462,18 @@ export default class Lottery extends Component {
                                                 timeout={100}
                                                 classNames="lottery-avatar"
                                             >
-                                                <img className="moveToList" style={{ width: "200px", height: "260px" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".JPG"} alt="" />
+                                                {rollMode == 0 ? <img className="moveToList" style={{ width: "200px", height: "260px" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".JPG"} alt="" />
+                                                    : <img className="moveToList" style={{ width: "200px", height: "260px" }} src={"/images/WomenDay/" + currentUser.id + ".JPG"} alt="" />}
                                             </CSSTransition>
                                         </TransitionGroup>
                                         <canvas id="fireWork"></canvas>
-                                        <img className="moveToList" title="Hello" style={{ width: "200px", height: "260px" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".JPG"} alt="" />
-                                        <p className="winnerName absoluteMiddle">{currentUser.rawName}</p>
+                                        {rollMode == 0 ? <img className="moveToList" title="Hello" style={{ width: "200px", height: "260px" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".JPG"} alt="" /> :
+                                            <img className="moveToList" title="Hello" style={{ width: "200px", height: "260px" }} src={"/images/WomenDay/" + currentUser.id + ".JPG"} alt="" />}
+                                        {rollMode == 0 ? <p className="winnerName absoluteMiddle">{currentUser.rawName}</p> : null}
                                         {interval == "" && currentPrize < 2 && listWinner[currentPrize].length > 0 ?
                                             <img className="moveToList" src={"/images/frame" + (currentPrize) + ".png"} alt="" style={{ width: "200px", height: "260px", transform: "scale(1.2)" }} />
                                             : null
                                         }
-
                                     </>
                                     :
                                     <div className="">
