@@ -449,10 +449,8 @@ export default class Lottery extends Component {
                             </Paper> : null}
                     </div>
                     {listUser.map((currentUser, index) => (
-                        <img style={{ display: "none" }} key={index} src={process.env.PUBLIC_URL + "/images/WomenDay/" + currentUser.id + ".JPG"} alt="" />
+                        <img style={{ display: "none" }} key={index} src={require("./WomenDay/" + currentUser.id + ".jpg")} alt="" />
                     ))}
-                    <img src={"/images/WomenDay/1.JPG"} alt="" />
-                    <img style={{ display: "none" }} src={"/images/WomenDay/2.JPG"} alt="" />
                     <div className={"col-md-6"} style={{ height: "85vh" }}>
                         <Paper style={{ backgroundColor: "rgb(255,227,229)", height: "100%", backgroundImage: "url('/images/background-roll.png')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
                             {rollMode == 1 ?
@@ -481,12 +479,12 @@ export default class Lottery extends Component {
                                                 classNames="lottery-avatar"
                                             >
                                                 {rollMode == 0 ? <img className="moveToList" style={{ width: "200px", height: "260px" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".JPG"} alt="" />
-                                                    : <img className="moveToList" style={{ width: "200px", height: "260px" }} src={process.env.PUBLIC_URL + "/images/WomenDay/" + currentUser.id + ".JPG"} alt="" />}
+                                                    : <img className="moveToList" style={{ width: "200px", height: "260px" }} src={require("./WomenDay/" + currentUser.id + ".jpg")} alt="" />}
                                             </CSSTransition>
                                         </TransitionGroup>
                                         <canvas id="fireWork"></canvas>
                                         {rollMode == 0 ? <img className="moveToList" title="Hello" style={{ width: "200px", height: "260px" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".JPG"} alt="" /> :
-                                            <img className="moveToList" title="Hello" style={{ width: "200px", height: "260px" }} src={process.env.PUBLIC_URL + "/images/WomenDay/" + currentUser.id + ".JPG"} alt="" />}
+                                            <img className="moveToList" title="Hello" style={{ width: "200px", height: "260px" }} src={require("./WomenDay/" + currentUser.id + ".jpg")} alt="" />}
                                         {rollMode == 0 ? <p className="winnerName absoluteMiddle">{currentUser.rawName}</p> : null}
                                         {interval == "" && currentPrize < 2 && listWinner[currentPrize].length > 0 ?
                                             <img className="moveToList" src={"/images/frame" + (currentPrize) + ".png"} alt="" style={{ width: "200px", height: "260px", transform: "scale(1.2)" }} />
