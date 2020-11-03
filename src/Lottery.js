@@ -384,7 +384,14 @@ export default class Lottery extends Component {
         return (
             <div className="container-fluid" style={{ background: "url('/images/background.webp')", minHeight: "100vh" }}>
                 <audio style={{ display: "none" }} src="/background.mp3" autoPlay={true}></audio>
+                <div style={{ display: "none" }}>
+
+                    {listUser.map(currentUser => (
+                        <img key={currentUser.id} src={require("./SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".jpg")} alt="" />
+                    ))}
+                </div>
                 <div className="row pt-5">
+
                     <div className={"col-md-3"} style={{ minHeight: "85vh" }}>
                         {!womanMode ?
                             <Paper style={{ height: "100%", position: "relative" }}>
@@ -459,7 +466,7 @@ export default class Lottery extends Component {
                                     </Tabs>
                                 </Paper>
                                 : null}
-                                <img src="/images/banner.png" alt="" style={{ width: "200px"}}  align="right"/>
+                            <img src="/images/banner.png" alt="" style={{ width: "200px" }} align="right" />
                             <div className="row justify-content-md-center" style={typeOfRoll == 0 ? { width: "100%", textAlign: "center", margin: 0 } : { margin: 0, textAlign: "center", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
                                 {typeOfRoll == 0 ? currentPrize !== -1 ? currentPrize <= prizeBeginMutiple ?
                                     <div className="col-md-12">
