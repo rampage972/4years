@@ -381,10 +381,6 @@ export default class Lottery extends Component {
     render() {
         const { speedAutoPlay, listUser, reward, autoPlay, currentUser, womenDayPrize, listWomenPrize, womanMode, prizeBeginMutiple,
             currentPrize, interval, listWinner, listCurrentUser, isClickedRoll, intervalMultiple, typeOfRoll } = this.state
-        let listImgImport = []
-        for(let i=0;i<=189;i++)
-        listImgImport.push(i)
-
         return (
             <div className="container-fluid" style={{ background: "url('/images/background.webp')", minHeight: "100vh" }}>
                 <audio style={{ display: "none" }} src="/background.mp3" autoPlay={true}></audio>
@@ -446,9 +442,6 @@ export default class Lottery extends Component {
                                 }
                             </Paper> : null}
                     </div>
-                    {listImgImport.map((currentImg) => (
-                        <img style={{ display: "none" }} key={currentImg} src={"/images/SOFT_Ảnh thẻ 2020_order/" + currentImg + ".JPG"} alt="" />
-                    ))}
                     <div className={"col-md-6"} style={{ minHeight: "85vh" }}>
                         <Paper style={{ backgroundColor: "rgb(255,227,229)", height: "100%", backgroundImage: "url('/images/background-roll.png')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
                             {womanMode ?
@@ -478,7 +471,7 @@ export default class Lottery extends Component {
                                                 timeout={100}
                                                 classNames="lottery-avatar"
                                             >
-                                                {!womanMode ? <img className="moveToList" style={{ width: "200px", height: "260px" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".JPG"} alt="" />
+                                                {!womanMode ? <img className="moveToList" style={{ width: "200px", height: "260px" }} src={require("./SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".jpg")} alt="" />
                                                     : <img className="moveToList" style={{ width: "200px", height: "260px" }} src={require("./WomenDay/" + currentUser.id + ".jpg")} alt="" />}
                                             </CSSTransition>
                                         </TransitionGroup>
@@ -487,7 +480,7 @@ export default class Lottery extends Component {
                                             : null
                                         }
                                         <canvas id="fireWork"></canvas>
-                                        {!womanMode ? <img style={{ width: "200px", height: "260px" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".JPG"} alt="" /> :
+                                        {!womanMode ? <img style={{ width: "200px", height: "260px" }} src={require("./SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".jpg")} alt="" /> :
                                             <img className="moveToList" style={{ width: "200px", height: "260px" }} src={require("./WomenDay/" + currentUser.id + ".jpg")} alt="" />}
                                         {!womanMode ? <div className="col-md-12 pt-4">
                                             <p className="font-weight-bold">{currentUser.rawName}</p>
@@ -499,7 +492,7 @@ export default class Lottery extends Component {
                                     <div className="">
                                         {listCurrentUser.map((user, indexUser) => (
                                             <div className="prizeLow" key={indexUser}>
-                                                <img style={{ width: "100px", height: "130px" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + user.id + ".JPG"} alt="" />
+                                                <img style={{ width: "100px", height: "130px" }} src={require("./SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".jpg")} alt="" />
                                                 {intervalMultiple == "" ? <p>{user.rawName}</p> : null}
                                             </div>
                                         ))}
@@ -518,7 +511,7 @@ export default class Lottery extends Component {
                                     // onSwiper={(swiper) => console.log(swiper)}
                                     >
                                         {listUser.map((user, indexUser) => (
-                                            <SwiperSlide key={indexUser}> <img style={{ width: "100%", height: "150px" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + user.id + ".JPG"} alt="" /></SwiperSlide>
+                                            <SwiperSlide key={indexUser}> <img style={{ width: "100%", height: "150px" }} src={require("./SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".jpg")} alt="" /></SwiperSlide>
                                         ))}
                                     </Swiper>
                                     : <>
@@ -567,7 +560,7 @@ export default class Lottery extends Component {
                                                                     <div className="row">
                                                                         {item.map((user, index) => (
                                                                             <div className="col-md-3 pt-2" key={index}>
-                                                                                <img title={user.rawName} key={index} style={{ width: "100%" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + user.id + ".JPG"} alt="" />
+                                                                                <img title={user.rawName} key={index} style={{ width: "100%" }} src={require("./SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".jpg")} alt="" />
                                                                             </div>
                                                                         ))}
                                                                     </div>
