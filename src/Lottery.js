@@ -567,7 +567,7 @@ export default class Lottery extends Component {
                                                                     <div className="row">
                                                                         {item.map((user, index) => (
                                                                             <div className="col-md-3 pt-2" key={index}>
-                                                                                <img title={user.rawName} key={index} style={{ width: "100%" }} src={require("./SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".jpg")} alt="" />
+                                                                                <img title={user.rawName} key={index} style={{ width: "100%" }} src={require("./SOFT_Ảnh thẻ 2020_order/" + user.id + ".jpg")} alt="" />
                                                                             </div>
                                                                         ))}
                                                                     </div>
