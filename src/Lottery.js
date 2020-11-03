@@ -3,9 +3,8 @@ import './Lottery.css'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import SwiperCore, { Autoplay } from 'swiper';
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import ExpandLess from '@material-ui/icons/ExpandLess';
-import ExpandMore from '@material-ui/icons/ExpandMore';
-import { Button, Collapse, List, ListItem, ListItemText, Paper, Tab, Tabs, TableBody, TableCell, TableRow, TableHead, Table, TableContainer } from '@material-ui/core';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import { Button, Collapse, List, ListItem, Typography, Paper, Tab, Tabs, TableBody, TableCell, TableRow, TableHead, Table, TableContainer, AccordionSummary, Accordion, AccordionDetails } from '@material-ui/core';
 import { faCloudUploadAlt, faDollarSign, faMoneyBillWave } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import userName from './nameMapping.json'
@@ -21,8 +20,7 @@ export default class Lottery extends Component {
     constructor() {
         super()
         this.state = {
-            rollMode: 0,
-            listWomen: ["Đỗ Tố Quỳnh", "Nguyễn Thị Hảo", "Liêu Thị Thảo", "Lê Thị Thu Trang", "Lê Thị Hồng Vân", "Nguyễn Thị Ngọc Linh", "Bùi Mỹ Huyền", "Nguyễn Lê Giang", "Nguyễn Thị Kim Uyên", "Võ Thị Cẩm Tú", "Nguyễn Thị Minh Hoài", "Nguyễn Thị Thanh Tuyền", "Đinh Thị Thu Hiền", "Trần Thị Hiền", "Đinh Thị Nhàn", "Phùng Thị Khánh Linh", "Đinh Thị Ngọc Mai", "Hồ Thị Thúy Hà", "Nguyễn Thị Tuyền", "Đỗ Thị Ngọc Anh", "Nguyễn Thu Huyền", "Trần Thị Thảo", "Đoàn Thanh Tâm", "Phó Thị Vân Anh", "Nguyễn Thị Huyền Anh", "Đào Bích Phương", "Hoàng Thị Hải", "Đỗ Thị Hằng", "Nguyễn Thị Trâm", "Nguyễn Thị Chúc", "Tống Thị Thu Nga", "Trần Thị Thúy Hằng", "Vương Thị Huyền", "Bùi Thu Yến", "Nguyễn Thị Phương Hà", "Triệu Thị Trinh", "Nguyễn Quỳnh Anh", "Nguyễn Thị Kiều Chinh", "Nguyễn Thùy Duyên", "Lê Thị Thùy", "Nguyễn Thị Loan"],
+            womanMode: false,
             womenDayPrize: ['Pizzas', 'Sandwiches', 'Salads', 'Soup', 'Japanese food', 'Pastas'],
             listWomenPrize: [],
             currentIndexWomen: 0,
@@ -38,6 +36,7 @@ export default class Lottery extends Component {
                 id: 1,
             },
             numberOfRoll: 5,
+            prizeBeginMutiple: 3,
             listUserDivine: [],
             listCurrentUser: [
                 {
@@ -62,52 +61,52 @@ export default class Lottery extends Component {
             interval: "",
             intervalMultiple: "",
             currentPosition: 1,
-            currentPrize: 5,
+            currentPrize: 3,
             listWinner: [[], [], [], [], [], []],
             listRandomNum: [],
             reward: [
                 {
                     name: "Giải Đặc Biệt",
-                    prize: 4000000,
+                    prize: 5000000,
                     isChoosen: false,
                     numberOfPrize: 1,
                 }
                 ,
                 {
                     name: "Giải Nhất",
+                    prize: 3000000,
+                    isChoosen: false,
+                    numberOfPrize: 2
+                }
+                ,
+                {
+                    name: "Giải Nhì",
                     prize: 2000000,
                     isChoosen: false,
                     numberOfPrize: 3
                 }
                 ,
                 {
-                    name: "Giải Nhì",
+                    name: "Giải Ba",
                     prize: 1000000,
-                    isChoosen: false,
+                    isChoosen: true,
                     numberOfPrize: 5
                 }
-                ,
-                {
-                    name: "Giải Ba",
-                    prize: 500000,
-                    isChoosen: false,
-                    numberOfPrize: 10
-                }
-                ,
-                {
-                    name: "Giải Tư",
-                    prize: 200000,
-                    isChoosen: false,
-                    numberOfPrize: 20
-                }
-                ,
-                {
-                    name: "Giải Năm",
-                    prize: 100000,
-                    isChoosen: true,
-                    numberOfPrize: 50
-                }
-                ,
+                // ,
+                // {
+                //     name: "Giải Tư",
+                //     prize: 200000,
+                //     isChoosen: false,
+                //     numberOfPrize: 20
+                // }
+                // ,
+                // {
+                //     name: "Giải Năm",
+                //     prize: 100000,
+                //     isChoosen: false,
+                //     numberOfPrize: 50
+                // }
+                // ,
             ]
         }
         this.listNameFileUpload = React.createRef()
@@ -134,7 +133,7 @@ export default class Lottery extends Component {
         // //     console.log(mordermRand)
         // // }, 10000)
         let { listUser, currentUser, listWinner, currentPrize } = this.state
-
+        listUser = userName
         this.setState({ listUser, listWinner })
     }
     componentDidMount = () => {
@@ -150,15 +149,13 @@ export default class Lottery extends Component {
                 window.status = "F5 disabled";
                 break;
             case 89: // 'Y'
-                let { rollMode, listUser } = this.state
-                if (rollMode == 0) rollMode = 1
-                else rollMode = 0
+                let { womanMode, listUser } = this.state
                 for (let i = 1; i <= 9; i++) {
                     listUser.push({
                         id: i
                     })
                 }
-                this.setState({ rollMode, currentPrize: 0, listUser })
+                this.setState({ womanMode: !womanMode, currentPrize: 0, listUser })
                 break;
         }
     }
@@ -321,9 +318,7 @@ export default class Lottery extends Component {
             }, 5000)
         }
     }
-    setRandomPrize = () => {
-        console.log("RUN")
-    }
+
     handleClickPrize = (e) => {
         let { reward, interval } = this.state
         if (!reward[e].isChoosen && interval == "") {
@@ -384,15 +379,15 @@ export default class Lottery extends Component {
         this.listNameFileUpload.current.click()
     }
     render() {
-        const { speedAutoPlay, listUser, reward, autoPlay, currentUser, womenDayPrize, listWomenPrize, rollMode,
+        const { speedAutoPlay, listUser, reward, autoPlay, currentUser, womenDayPrize, listWomenPrize, womanMode, prizeBeginMutiple,
             currentPrize, interval, listWinner, listCurrentUser, isClickedRoll, intervalMultiple, typeOfRoll } = this.state
 
         return (
             <div className="container-fluid" style={{ background: "url('/images/background.webp')", minHeight: "100vh" }}>
                 <audio style={{ display: "none" }} src="/background.mp3" autoPlay={true}></audio>
                 <div className="row pt-5">
-                    <div className={"col-md-3"} style={{ height: "85vh" }}>
-                        {rollMode == 0 ?
+                    <div className={"col-md-3"} style={{ minHeight: "85vh" }}>
+                        {!womanMode ?
                             <Paper style={{ height: "100%", position: "relative" }}>
                                 <img src="/images/background-list.png" alt="" style={{ position: "absolute", width: " 100%", height: "100%" }} />
                                 {typeOfRoll == 0 ?
@@ -448,12 +443,12 @@ export default class Lottery extends Component {
                                 }
                             </Paper> : null}
                     </div>
-                    {listUser.map((currentUser, index) => (
+                    {/* {listUser.map((currentUser, index) => (
                         <img style={{ display: "none" }} key={index} src={require("./WomenDay/" + currentUser.id + ".jpg")} alt="" />
-                    ))}
-                    <div className={"col-md-6"} style={{ height: "85vh" }}>
+                    ))} */}
+                    <div className={"col-md-6"} style={{ minHeight: "85vh" }}>
                         <Paper style={{ backgroundColor: "rgb(255,227,229)", height: "100%", backgroundImage: "url('/images/background-roll.png')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
-                            {rollMode == 1 ?
+                            {womanMode ?
                                 <Paper>
                                     <Tabs
                                         centered
@@ -468,29 +463,35 @@ export default class Lottery extends Component {
                                     </Tabs>
                                 </Paper>
                                 : null}
-                            <img src="/images/banner.png" alt="" style={{ width: "200px", position: "absolute", right: "0" }} />
-                            <div style={typeOfRoll == 0 ? { width: "100%", paddingTop: "200px", textAlign: "center" } : { textAlign: "center", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
-                                {typeOfRoll == 0 ? currentPrize !== -1 ? currentPrize < 3 ?
-                                    <>
-                                        <TransitionGroup>
+                                <img src="/images/banner.png" alt="" style={{ width: "200px"}}  align="right"/>
+                            <div className="row justify-content-md-center" style={typeOfRoll == 0 ? { width: "100%", textAlign: "center", margin: 0 } : { margin: 0, textAlign: "center", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
+                                {typeOfRoll == 0 ? currentPrize !== -1 ? currentPrize <= prizeBeginMutiple ?
+                                    <div className="col-md-12">
+                                        <TransitionGroup
+                                            style={{ position: "relative" }}
+                                        >
                                             <CSSTransition
                                                 key={currentUser.id}
                                                 timeout={100}
                                                 classNames="lottery-avatar"
                                             >
-                                                {rollMode == 0 ? <img className="moveToList" style={{ width: "200px", height: "260px" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".JPG"} alt="" />
+                                                {!womanMode ? <img className="moveToList" style={{ width: "200px", height: "260px" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".JPG"} alt="" />
                                                     : <img className="moveToList" style={{ width: "200px", height: "260px" }} src={require("./WomenDay/" + currentUser.id + ".jpg")} alt="" />}
                                             </CSSTransition>
                                         </TransitionGroup>
-                                        <canvas id="fireWork"></canvas>
-                                        {rollMode == 0 ? <img className="moveToList" title="Hello" style={{ width: "200px", height: "260px" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".JPG"} alt="" /> :
-                                            <img className="moveToList" title="Hello" style={{ width: "200px", height: "260px" }} src={require("./WomenDay/" + currentUser.id + ".jpg")} alt="" />}
-                                        {rollMode == 0 ? <p className="winnerName absoluteMiddle">{currentUser.rawName}</p> : null}
                                         {interval == "" && currentPrize < 2 && listWinner[currentPrize].length > 0 ?
                                             <img className="moveToList" src={"/images/frame" + (currentPrize) + ".png"} alt="" style={{ width: "200px", height: "260px", transform: "scale(1.2)" }} />
                                             : null
                                         }
-                                    </>
+                                        <canvas id="fireWork"></canvas>
+                                        {!womanMode ? <img style={{ width: "200px", height: "260px" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".JPG"} alt="" /> :
+                                            <img className="moveToList" style={{ width: "200px", height: "260px" }} src={require("./WomenDay/" + currentUser.id + ".jpg")} alt="" />}
+                                        {!womanMode ? <div className="col-md-12 pt-4">
+                                            <p className="font-weight-bold">{currentUser.rawName}</p>
+                                        </div>
+                                            : null}
+
+                                    </div>
                                     :
                                     <div className="">
                                         {listCurrentUser.map((user, indexUser) => (
@@ -524,14 +525,14 @@ export default class Lottery extends Component {
                                     </>}
                             </div>
                             {typeOfRoll == 0 ?
-                                <div className={currentPrize < 3 ? "text-center absoluteMiddle" : "text-center"} style={currentPrize < 3 ? { bottom: "10em" } : { marginTop: "2em" }}>
-                                    <Button style={{ padding: "1em 4em" }} disabled={isClickedRoll} variant="contained" color="secondary" onClick={rollMode == 0 ? currentPrize < 3 ? this.setRandom : this.setMultipleRandom : this.setWomenRandom}>Roll</Button>
+                                <div className={currentPrize <= prizeBeginMutiple ? "text-center" : "text-center"} style={currentPrize <= prizeBeginMutiple ? { bottom: "10em" } : { marginTop: "2em" }}>
+                                    <Button style={{ padding: "1em 4em" }} disabled={isClickedRoll} variant="contained" color="secondary" onClick={!womanMode ? currentPrize <= prizeBeginMutiple ? this.setRandom : this.setMultipleRandom : this.setWomenRandom}>Roll</Button>
                                 </div> : null}
                         </Paper>
                     </div>
                     {typeOfRoll == 0 ?
                         <div className="col-md-3">
-                            {rollMode == 0 ?
+                            {!womanMode ?
                                 <Paper style={{ height: "100%", position: "relative" }}>
                                     <div style={{ backgroundImage: "url('/images/confetti.gif')" }}>
 
@@ -554,21 +555,21 @@ export default class Lottery extends Component {
                                                 if (item.length > 0)
                                                     return (
                                                         <div key={key}>
-                                                            <ListItem button key={key} onClick={() => this.explanWinner(key)}>
-                                                                <ListItemText className="listPrizeName" primary={reward[key].name} />
-                                                                {item.isOpen ? <ExpandLess /> : <ExpandMore />}
-                                                            </ListItem>
-                                                            <Collapse in={item.isOpen} timeout="auto" unmountOnExit>
-                                                                <List component="div" disablePadding>
-                                                                    <ListItem style={{ flexWrap: "wrap", width: "100%" }}>
+                                                            <Accordion square defaultExpanded={true} >
+                                                                <AccordionSummary aria-controls="panel1d-content" id="panel1d-header" expandIcon={<ExpandMoreIcon />}>
+                                                                    <Typography className="font-weight-bold">
+                                                                        {reward[key].name}</Typography>
+                                                                </AccordionSummary>
+                                                                <AccordionDetails>
+                                                                    <div className="row">
                                                                         {item.map((user, index) => (
-                                                                            <div key={index}>
-                                                                                <img title={user.rawName} key={index} style={{ width: "60px", height: "75px" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + user.id + ".JPG"} alt="" />
+                                                                            <div className="col-md-3 pt-2" key={index}>
+                                                                                <img title={user.rawName} key={index} style={{ width: "100%" }} src={"/images/SOFT_Ảnh thẻ 2020_order/" + user.id + ".JPG"} alt="" />
                                                                             </div>
                                                                         ))}
-                                                                    </ListItem>
-                                                                </List>
-                                                            </Collapse>
+                                                                    </div>
+                                                                </AccordionDetails>
+                                                            </Accordion>
                                                         </div>)
 
 

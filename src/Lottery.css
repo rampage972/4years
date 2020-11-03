@@ -26,7 +26,7 @@
 } */
 
 .moveToList {
-  top: 200px;
+  /* top: 200px; */
   position: absolute;
   margin-left: auto;
   margin-right: auto;
@@ -36,7 +36,7 @@
 }
 
 #fireWork {
-  top: 150px;
+  top: 0;
   position: absolute;
   margin-left: auto;
   margin-right: auto;
@@ -124,14 +124,5 @@
   z-index: 5;
 }
 
-.winnerName {
-  font-weight: bold;
-  position: absolute;
-  bottom: 14em !important;
-}
-
-.listPrizeName>span {
-  font-weight: bold;
-}
 
 .swiper-wrapper{-webkit-transition-timing-function:linear!important; -o-transition-timing-function:linear!important; transition-timing-function:linear!important; }
