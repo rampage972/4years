@@ -2,13 +2,13 @@ import React, { Component } from 'react'
 import './Lottery.css'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import SwiperCore, { Autoplay } from 'swiper';
+import { withStyles } from '@material-ui/core/styles';
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import { Button, Collapse, List, ListItem, Typography, Paper, Tab, Tabs, TableBody, TableCell, TableRow, TableHead, Table, TableContainer, AccordionSummary, Accordion, AccordionDetails } from '@material-ui/core';
-import { faCloudUploadAlt, faDollarSign, faMoneyBillWave } from '@fortawesome/free-solid-svg-icons';
+import { Button, Collapse, List, ListItem, Typography, Paper, Tab, Tabs, TableBody, TableCell, TableRow, TableHead, Table, TableContainer, AccordionSummary as MuiAccordionSummary, Accordion, AccordionDetails } from '@material-ui/core';
+import { faCloudUploadAlt, faDollarSign, faDownload, faFileExport, faMoneyBillWave } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import userName from './nameMapping.json'
-import MaterialTable from "material-table";
 import 'swiper/swiper.scss';
 import Wheel from './Wheel';
 const confetti = require('canvas-confetti')
@@ -16,10 +16,16 @@ const random = require('random')
 const RandomOrg = require('random-org');
 const randomOrg = new RandomOrg({ apiKey: 'b558199b-0a92-43cb-991b-23551659a901' });
 SwiperCore.use([Autoplay]);
+const AccordionSummary = withStyles({
+    root: {
+        backgroundColor: 'rgba(0, 0, 0, .03)',
+    },
+})(MuiAccordionSummary);
 export default class Lottery extends Component {
     constructor() {
         super()
         this.state = {
+            isShowListWinner: false,
             womanMode: false,
             womenDayPrize: ['Pizzas', 'Sandwiches', 'Salads', 'Soup', 'Japanese food', 'Pastas'],
             listWomenPrize: [],
@@ -172,7 +178,7 @@ export default class Lottery extends Component {
     }
 
     setRandom = () => {
-        let { listUser, listWinner, currentPrize, isClickedRoll } = this.state
+        let { listUser, listWinner, currentPrize, isClickedRoll, isShowListWinner } = this.state
         let randomNumber
         let trullyRandomNumber
         randomOrg.generateIntegers({ min: 0, max: listUser.length - 1, n: 1 })
@@ -380,7 +386,7 @@ export default class Lottery extends Component {
     }
     render() {
         const { speedAutoPlay, listUser, reward, autoPlay, currentUser, womenDayPrize, listWomenPrize, womanMode, prizeBeginMutiple,
-            currentPrize, interval, listWinner, listCurrentUser, isClickedRoll, intervalMultiple, typeOfRoll } = this.state
+            currentPrize, interval, listWinner, listCurrentUser, isClickedRoll, intervalMultiple, typeOfRoll, isShowListWinner } = this.state
         return (
             <div className="container-fluid" style={{ background: "url('/images/background.webp')", minHeight: "100vh" }}>
                 <audio style={{ display: "none" }} src="/background.mp3" autoPlay={true}></audio>
@@ -489,10 +495,10 @@ export default class Lottery extends Component {
                                         <canvas id="fireWork"></canvas>
                                         {!womanMode ? <img style={{ width: "200px", height: "260px" }} src={require("./SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".jpg")} alt="" /> :
                                             <img className="moveToList" style={{ width: "200px", height: "260px" }} src={require("./WomenDay/" + currentUser.id + ".jpg")} alt="" />}
-                                        {!womanMode ? <div className="col-md-12 pt-4">
+                                        {/* {!womanMode ? <div className="col-md-12 pt-4">
                                             <p className="font-weight-bold">{currentUser.rawName}</p>
                                         </div>
-                                            : null}
+                                            : null} */}
 
                                     </div>
                                     :
@@ -528,7 +534,7 @@ export default class Lottery extends Component {
                                     </>}
                             </div>
                             {typeOfRoll == 0 ?
-                                <div className={currentPrize <= prizeBeginMutiple ? "text-center" : "text-center"} style={currentPrize <= prizeBeginMutiple ? { bottom: "10em" } : { marginTop: "2em" }}>
+                                <div className={"text-center mt-2"} style={currentPrize <= prizeBeginMutiple ? { bottom: "10em" } : { marginTop: "2em" }}>
                                     <Button style={{ padding: "1em 4em" }} disabled={isClickedRoll} variant="contained" color="secondary" onClick={!womanMode ? currentPrize <= prizeBeginMutiple ? this.setRandom : this.setMultipleRandom : this.setWomenRandom}>Roll</Button>
                                 </div> : null}
                         </Paper>
@@ -546,43 +552,47 @@ export default class Lottery extends Component {
                             </h3>
                                     </div>
                                     <div className="sb sb-2">
-                                        <small>section break 2</small>
                                         <hr className="section-break-2" />
                                     </div>
-                                    <div>
+                                    {isShowListWinner ?
+                                        <div>
+                                            <List
+                                                component="nav"
+                                            >
+                                                {listWinner.map((item, key) => {
+                                                    if (item.length > 0)
+                                                        return (
+                                                            <div key={key} className="listWinner">
+                                                                <Accordion square defaultExpanded={true} >
+                                                                    <AccordionSummary aria-controls="panel1d-content" id="panel1d-header" expandIcon={<ExpandMoreIcon />}>
+                                                                        <Typography className="font-weight-bold">
+                                                                            {reward[key].name}</Typography>
+                                                                    </AccordionSummary>
+                                                                    <AccordionDetails>
+                                                                        <div className="row">
+                                                                            {item.map((user, index) => (
+                                                                                <div className="col-md-3 pt-2" key={index}>
+                                                                                    <img title={user.rawName} key={index} style={{ width: "100%" }} src={require("./SOFT_Ảnh thẻ 2020_order/" + user.id + ".jpg")} alt="" />
+                                                                                </div>
+                                                                            ))}
+                                                                        </div>
+                                                                    </AccordionDetails>
+                                                                </Accordion>
+                                                            </div>)
 
-                                        <List
-                                            component="nav"
-                                        >
-                                            {listWinner.map((item, key) => {
-                                                if (item.length > 0)
-                                                    return (
-                                                        <div key={key}>
-                                                            <Accordion square defaultExpanded={true} >
-                                                                <AccordionSummary aria-controls="panel1d-content" id="panel1d-header" expandIcon={<ExpandMoreIcon />}>
-                                                                    <Typography className="font-weight-bold">
-                                                                        {reward[key].name}</Typography>
-                                                                </AccordionSummary>
-                                                                <AccordionDetails>
-                                                                    <div className="row">
-                                                                        {item.map((user, index) => (
-                                                                            <div className="col-md-3 pt-2" key={index}>
-                                                                                <img title={user.rawName} key={index} style={{ width: "100%" }} src={require("./SOFT_Ảnh thẻ 2020_order/" + user.id + ".jpg")} alt="" />
-                                                                            </div>
-                                                                        ))}
-                                                                    </div>
-                                                                </AccordionDetails>
-                                                            </Accordion>
-                                                        </div>)
 
-
-                                            }
-                                            )}
-                                        </List>
-                                        <div className="text-center">
-                                            <Button variant="contained" color="primary" onClick={this.exportToJsonFile}>Export dữ liệu trúng thưởng</Button>
+                                                }
+                                                )}
+                                            </List>
+                                            <div className="text-center">
+                                                <Button variant="contained" color="primary" onClick={this.exportToJsonFile}>Export <FontAwesomeIcon className="ml-2" icon={faDownload} /></Button>
+                                            </div>
                                         </div>
-                                    </div>
+                                        :
+                                        <div className="text-center">
+                                            <Button variant="contained" color="secondary" onClick={() => { this.setState({ isShowListWinner: true }) }}>Kết thúc quay số</Button>
+                                        </div>
+                                    }
                                 </Paper> : null}
                         </div> : null}
                 </div>
