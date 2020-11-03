@@ -381,6 +381,9 @@ export default class Lottery extends Component {
     render() {
         const { speedAutoPlay, listUser, reward, autoPlay, currentUser, womenDayPrize, listWomenPrize, womanMode, prizeBeginMutiple,
             currentPrize, interval, listWinner, listCurrentUser, isClickedRoll, intervalMultiple, typeOfRoll } = this.state
+        let listImgImport = []
+        for(let i=0;i<=189;i++)
+        listImgImport.push(i)
 
         return (
             <div className="container-fluid" style={{ background: "url('/images/background.webp')", minHeight: "100vh" }}>
@@ -443,9 +446,9 @@ export default class Lottery extends Component {
                                 }
                             </Paper> : null}
                     </div>
-                    {/* {listUser.map((currentUser, index) => (
-                        <img style={{ display: "none" }} key={index} src={require("./WomenDay/" + currentUser.id + ".jpg")} alt="" />
-                    ))} */}
+                    {listImgImport.map((currentImg) => (
+                        <img style={{ display: "none" }} key={currentImg} src={"/images/SOFT_Ảnh thẻ 2020_order/" + currentImg + ".JPG"} alt="" />
+                    ))}
                     <div className={"col-md-6"} style={{ minHeight: "85vh" }}>
                         <Paper style={{ backgroundColor: "rgb(255,227,229)", height: "100%", backgroundImage: "url('/images/background-roll.png')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
                             {womanMode ?
