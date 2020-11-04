@@ -8,7 +8,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { Button, Collapse, List, ListItem, Typography, Paper, Tab, Tabs, TableBody, TableCell, TableRow, TableHead, Table, TableContainer, AccordionSummary as MuiAccordionSummary, Accordion, AccordionDetails } from '@material-ui/core';
 import { faCloudUploadAlt, faDollarSign, faDownload, faFileExport, faMoneyBillWave } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import userName from './nameMapping.json'
+import userName from './fintech_full.json'
 import 'swiper/swiper.scss';
 import Wheel from './Wheel';
 const confetti = require('canvas-confetti')
@@ -41,7 +41,7 @@ export default class Lottery extends Component {
             currentUser: {
                 id: 1,
             },
-            numberOfRoll: 5,
+            numberOfRoll: 4,
             prizeBeginMutiple: 3,
             listUserDivine: [],
             listCurrentUser: [
@@ -77,7 +77,7 @@ export default class Lottery extends Component {
                 //     isChoosen: false,
                 //     numberOfPrize: 1,
                 // }
-                ,
+                // ,
                 {
                     name: "Giải Nhất",
                     prize: 3000000,
@@ -140,9 +140,11 @@ export default class Lottery extends Component {
         // // }, 10000)
         let { listUser, currentUser, listWinner, currentPrize } = this.state
         listUser = userName
+        console.log(userName)
         this.setState({ listUser, listWinner })
     }
     componentDidMount = () => {
+        // if(this.state.prizeBeginMutiple
         this.spliceArray(this.state.numberOfRoll)
         document.addEventListener("keydown", this.my_onkeydown_handler);
         // this.setMultipleRandom()
@@ -170,7 +172,9 @@ export default class Lottery extends Component {
         let indexArr = 0
         for (let i = 0; i < number; i++)  listUserDivine.push([])
         let sizePerArr = (listUser.length / number).toFixed(0)
+
         for (let i = 0; i < listUser.length; i++) {
+            console.log(listUserDivine)
             if (i + 1 == (indexArr + 1) * sizePerArr) indexArr++
             listUserDivine[indexArr].push(listUser[i])
         }
@@ -393,7 +397,7 @@ export default class Lottery extends Component {
                 <div style={{ display: "none" }}>
 
                     {listUser.map(currentUser => (
-                        <img key={currentUser.id} src={require("./SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".jpg")} alt="" />
+                        <img key={currentUser.id} src={require("./QRFINTECH/" + currentUser.id + ".png")} alt="" />
                     ))}
                 </div>
                 <div className="row pt-5">
@@ -484,17 +488,17 @@ export default class Lottery extends Component {
                                                 timeout={100}
                                                 classNames="lottery-avatar"
                                             >
-                                                {!womanMode ? <img className="moveToList" style={{ width: "200px", height: "260px" }} src={require("./SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".jpg")} alt="" />
-                                                    : <img className="moveToList" style={{ width: "200px", height: "260px" }} src={require("./WomenDay/" + currentUser.id + ".jpg")} alt="" />}
+                                                {!womanMode ? <img className="moveToList" style={{ width: "250px", height: "250px" }} src={require("./QRFINTECH/" + currentUser.id + ".png")} alt="" />
+                                                    : <img className="moveToList" style={{ width: "250px", height: "250px" }} src={require("./WomenDay/" + currentUser.id + ".jpg")} alt="" />}
                                             </CSSTransition>
                                         </TransitionGroup>
                                         {interval == "" && currentPrize < 2 && listWinner[currentPrize].length > 0 ?
-                                            <img className="moveToList" src={"/images/frame" + (currentPrize) + ".png"} alt="" style={{ width: "200px", height: "260px", transform: "scale(1.2)" }} />
+                                            <img className="moveToList" src={"/images/frame" + (currentPrize) + ".png"} alt="" style={{ width: "250px", height: "250px", transform: "scale(1.2)" }} />
                                             : null
                                         }
                                         <canvas id="fireWork"></canvas>
-                                        {!womanMode ? <img style={{ width: "200px", height: "260px" }} src={require("./SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".jpg")} alt="" /> :
-                                            <img className="moveToList" style={{ width: "200px", height: "260px" }} src={require("./WomenDay/" + currentUser.id + ".jpg")} alt="" />}
+                                        {!womanMode ? <img style={{ width: "250px", height: "250px" }} src={require("./QRFINTECH/" + currentUser.id + ".png")} alt="" /> :
+                                            <img className="moveToList" style={{ width: "250px", height: "250px" }} src={require("./WomenDay/" + currentUser.id + ".jpg")} alt="" />}
                                         {/* {!womanMode ? <div className="col-md-12 pt-4">
                                             <p className="font-weight-bold">{currentUser.rawName}</p>
                                         </div>
@@ -505,7 +509,7 @@ export default class Lottery extends Component {
                                     <div className="">
                                         {listCurrentUser.map((user, indexUser) => (
                                             <div className="prizeLow" key={indexUser}>
-                                                <img style={{ width: "100px", height: "130px" }} src={require("./SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".jpg")} alt="" />
+                                                <img style={{ width: "100px", height: "130px" }} src={require("./QRFINTECH/" + currentUser.id + ".png")} alt="" />
                                                 {intervalMultiple == "" ? <p>{user.rawName}</p> : null}
                                             </div>
                                         ))}
@@ -524,7 +528,7 @@ export default class Lottery extends Component {
                                     // onSwiper={(swiper) => console.log(swiper)}
                                     >
                                         {listUser.map((user, indexUser) => (
-                                            <SwiperSlide key={indexUser}> <img style={{ width: "100%", height: "150px" }} src={require("./SOFT_Ảnh thẻ 2020_order/" + currentUser.id + ".jpg")} alt="" /></SwiperSlide>
+                                            <SwiperSlide key={indexUser}> <img style={{ width: "100%", height: "150px" }} src={require("./QRFINTECH/" + currentUser.id + ".png")} alt="" /></SwiperSlide>
                                         ))}
                                     </Swiper>
                                     : <>
@@ -569,17 +573,24 @@ export default class Lottery extends Component {
                                                                             {reward[key].name}</Typography>
                                                                     </AccordionSummary>
                                                                     <AccordionDetails>
-                                                                        <div className="row">
-                                                                            {/* <div className="col-md-3 pt-2" key={index}>
-                                                                                    <img title={user.rawName} key={index} style={{ width: "100%" }} src={require("./SOFT_Ảnh thẻ 2020_order/" + user.id + ".jpg")} alt="" />
-                                                                                </div> */}
-                                                                            {item.map((user, index) => (
+                                                                        <table style={{ width: "100%" }} >
+                                                                            <tbody>
 
-                                                                                <div className="col-md-12 pt-2" key={index}>
-                                                                                    <p>{user.name}</p>
-                                                                                </div>
-                                                                            ))}
-                                                                        </div>
+                                                                                {/* <div className="col-md-3 pt-2" key={index}>
+                                                                                    <img title={user.rawName} key={index} style={{ width: "100%" }} src={require("./QRFINTECH/" + user.id + ".jpg")} alt="" />
+                                                                                </div> */}
+                                                                                {item.map((user, index) => (
+                                                                                    <tr className="pt-2" key={index}>
+                                                                                        <td style={{ width: "50%", textAlign: "center" }}>
+                                                                                            <p>{user.name}</p>
+                                                                                        </td>
+                                                                                        <td className="pl-3" style={{ width: "50%", textAlign: "center" }}>
+                                                                                            <p>{user.wnumber}</p>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                ))}
+                                                                            </tbody>
+                                                                        </table>
                                                                     </AccordionDetails>
                                                                 </Accordion>
                                                             </div>)
