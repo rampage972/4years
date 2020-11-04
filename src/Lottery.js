@@ -71,40 +71,40 @@ export default class Lottery extends Component {
             listWinner: [[], [], [], [], [], []],
             listRandomNum: [],
             reward: [
-                {
-                    name: "Giải Đặc Biệt",
-                    prize: 5000000,
-                    isChoosen: false,
-                    numberOfPrize: 1,
-                }
+                // {
+                //     name: "Giải Đặc Biệt",
+                //     prize: 5000000,
+                //     isChoosen: false,
+                //     numberOfPrize: 1,
+                // }
                 ,
                 {
                     name: "Giải Nhất",
                     prize: 3000000,
                     isChoosen: false,
-                    numberOfPrize: 2
+                    numberOfPrize: 1
                 }
                 ,
                 {
                     name: "Giải Nhì",
                     prize: 2000000,
                     isChoosen: false,
-                    numberOfPrize: 3
+                    numberOfPrize: 1
                 }
                 ,
                 {
                     name: "Giải Ba",
                     prize: 1000000,
-                    isChoosen: true,
-                    numberOfPrize: 5
+                    isChoosen: false,
+                    numberOfPrize: 1
                 }
-                // ,
-                // {
-                //     name: "Giải Tư",
-                //     prize: 200000,
-                //     isChoosen: false,
-                //     numberOfPrize: 20
-                // }
+                ,
+                {
+                    name: "Giải Khuyến Khích",
+                    prize: 500000,
+                    isChoosen: true,
+                    numberOfPrize: 8
+                }
                 // ,
                 // {
                 //     name: "Giải Năm",
@@ -570,11 +570,11 @@ export default class Lottery extends Component {
                                                                     </AccordionSummary>
                                                                     <AccordionDetails>
                                                                         <div className="row">
-                                                                                {/* <div className="col-md-3 pt-2" key={index}>
+                                                                            {/* <div className="col-md-3 pt-2" key={index}>
                                                                                     <img title={user.rawName} key={index} style={{ width: "100%" }} src={require("./SOFT_Ảnh thẻ 2020_order/" + user.id + ".jpg")} alt="" />
                                                                                 </div> */}
                                                                             {item.map((user, index) => (
-                                                                                
+
                                                                                 <div className="col-md-12 pt-2" key={index}>
                                                                                     <p>{user.name}</p>
                                                                                 </div>
