@@ -140,7 +140,6 @@ export default class Lottery extends Component {
         // // }, 10000)
         let { listUser, currentUser, listWinner, currentPrize } = this.state
         listUser = userName
-        console.log(userName)
         this.setState({ listUser, listWinner })
     }
     componentDidMount = () => {
@@ -174,7 +173,6 @@ export default class Lottery extends Component {
         let sizePerArr = (listUser.length / number).toFixed(0)
 
         for (let i = 0; i < listUser.length; i++) {
-            console.log(listUserDivine)
             if (i + 1 == (indexArr + 1) * sizePerArr) indexArr++
             listUserDivine[indexArr].push(listUser[i])
         }
@@ -210,8 +208,8 @@ export default class Lottery extends Component {
                     this.setState({ currentUser: listUser[randomNumber], currentPosition: randomNumber })
                 }, 100)
                 this.setState({ interval }, () => {
-                    let time = 6000
-                    if (currentPrize == 0) time = 7000
+                    let time = 5000
+                    if (currentPrize == 3) time = 3000
                     setTimeout(() => {
                         clearInterval(this.state.interval)
                         this.setState({ currentUser: listUser[trullyRandomNumber], currentPosition: trullyRandomNumber })
