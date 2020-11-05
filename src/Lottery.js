@@ -144,7 +144,7 @@ export default class Lottery extends Component {
     }
     componentDidMount = () => {
         // if(this.state.prizeBeginMutiple
-        this.spliceArray(this.state.numberOfRoll)
+        // this.spliceArray(this.state.numberOfRoll)
         document.addEventListener("keydown", this.my_onkeydown_handler);
         // this.setMultipleRandom()
     }
