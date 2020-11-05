@@ -5,7 +5,7 @@ import SwiperCore, { Autoplay } from 'swiper';
 import { withStyles } from '@material-ui/core/styles';
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import { Button, Collapse, List, ListItem, Typography, Paper, Tab, Tabs, TableBody, TableCell, TableRow, TableHead, Table, TableContainer, AccordionSummary as MuiAccordionSummary, Accordion, AccordionDetails } from '@material-ui/core';
+import { Button, Collapse, List, ListItem, Typography, Paper, Tab, Tabs, TableBody, TableCell, TableRow, TableHead, Table, TableContainer, AccordionSummary as MuiAccordionSummary, Accordion, AccordionDetails, IconButton } from '@material-ui/core';
 import { faCloudUploadAlt, faDollarSign, faDownload, faFileExport, faMoneyBillWave } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import userName from './fintech_full.json'
@@ -327,6 +327,8 @@ export default class Lottery extends Component {
         }
     }
 
+
+
     handleClickPrize = (e) => {
         let { reward, interval } = this.state
         if (!reward[e].isChoosen && interval == "") {
@@ -386,11 +388,17 @@ export default class Lottery extends Component {
     handleClickInputFile = () => {
         this.listNameFileUpload.current.click()
     }
+
+    toggleShowListWinner = () => {
+        let { isShowListWinner } = this.state
+        isShowListWinner = !isShowListWinner
+        this.setState({ isShowListWinner })
+    }
     render() {
         const { speedAutoPlay, listUser, reward, autoPlay, currentUser, womenDayPrize, listWomenPrize, womanMode, prizeBeginMutiple,
             currentPrize, interval, listWinner, listCurrentUser, isClickedRoll, intervalMultiple, typeOfRoll, isShowListWinner } = this.state
         return (
-            <div className="container-fluid" style={{ background: "url('/images/background.png')", minHeight: "100vh" }}>
+            <div className="container-fluid" style={{ background: "url('/images/background.png')", minHeight: "100vh", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
                 <audio style={{ display: "none" }} src="/background.mp3" autoPlay={true}></audio>
                 <div style={{ display: "none" }}>
 
@@ -536,7 +544,7 @@ export default class Lottery extends Component {
                                     </>}
                                 {typeOfRoll == 0 ?
                                     <div className={"text-center mt-2"} style={currentPrize <= prizeBeginMutiple ? { bottom: "10em" } : { marginTop: "2em" }}>
-                                        <Button style={{ padding: "1em 4em" }} disabled={isClickedRoll} variant="contained" color="secondary" onClick={!womanMode ? currentPrize <= prizeBeginMutiple ? this.setRandom : this.setMultipleRandom : this.setWomenRandom}>Roll</Button>
+                                        <Button style={{ padding: "1em 4em", backgroundColor: "#ec1c24", color: "white" }} disabled={isClickedRoll} variant="contained" onClick={!womanMode ? currentPrize <= prizeBeginMutiple ? this.setRandom : this.setMultipleRandom : this.setWomenRandom}>Roll</Button>
                                     </div> : null}
                             </div>
                         </Paper>
@@ -597,15 +605,15 @@ export default class Lottery extends Component {
                                                 }
                                                 )}
                                             </List>
-                                            <div className="text-center">
-                                                <Button variant="contained" color="primary" onClick={this.exportToJsonFile}>Export <FontAwesomeIcon className="ml-2" icon={faDownload} /></Button>
-                                            </div>
                                         </div>
-                                        :
-                                        <div className="text-center">
-                                            <Button variant="contained" color="secondary" onClick={() => { this.setState({ isShowListWinner: true }) }}>Kết thúc quay số</Button>
-                                        </div>
+                                        : null
                                     }
+                                    <div className="text-center">
+                                        <Button variant="contained" color="secondary" onClick={this.toggleShowListWinner}>{isShowListWinner ? "Ẩn danh sách" : "Hiện danh sách"}</Button>
+                                        {isShowListWinner ? <IconButton onClick={this.exportToJsonFile} >
+                                            <FontAwesomeIcon className="ml-2" icon={faDownload} />
+                                        </IconButton> : null}
+                                    </div>
                                 </Paper> : null}
                         </div> : null}
                 </div>
