@@ -390,7 +390,7 @@ export default class Lottery extends Component {
         const { speedAutoPlay, listUser, reward, autoPlay, currentUser, womenDayPrize, listWomenPrize, womanMode, prizeBeginMutiple,
             currentPrize, interval, listWinner, listCurrentUser, isClickedRoll, intervalMultiple, typeOfRoll, isShowListWinner } = this.state
         return (
-            <div className="container-fluid" style={{ background: "url('/images/background.webp')", minHeight: "100vh" }}>
+            <div className="container-fluid" style={{ background: "url('/images/background.png')", minHeight: "100vh" }}>
                 <audio style={{ display: "none" }} src="/background.mp3" autoPlay={true}></audio>
                 <div style={{ display: "none" }}>
 
@@ -458,7 +458,7 @@ export default class Lottery extends Component {
                             </Paper> : null}
                     </div>
                     <div className={"col-md-6"} style={{ minHeight: "85vh" }}>
-                        <Paper style={{ backgroundColor: "rgb(255,227,229)", height: "100%", backgroundImage: "url('/images/background-roll.png')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
+                        <Paper style={{ backgroundColor: "rgb(255,227,229)", height: "100%", backgroundImage: "url('/images/background-roll.jpg')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
                             {womanMode ?
                                 <Paper>
                                     <Tabs
@@ -474,8 +474,8 @@ export default class Lottery extends Component {
                                     </Tabs>
                                 </Paper>
                                 : null}
-                            <img src="/images/banner.png" alt="" style={{ width: "200px" }} align="right" />
-                            <div className="row justify-content-md-center" style={typeOfRoll == 0 ? { width: "100%", textAlign: "center", margin: 0 } : { margin: 0, textAlign: "center", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
+                            <img src="/images/banner.png" alt="" style={{ width: "200px", marginBottom: "1em", marginTop: "1em" }} align="right" />
+                            <div className="row justify-content-md-center" style={typeOfRoll == 0 ? { width: "100%", textAlign: "center", margin: 0, position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" } : { margin: 0, textAlign: "center", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
                                 {typeOfRoll == 0 ? currentPrize !== -1 ? currentPrize <= prizeBeginMutiple ?
                                     <div className="col-md-12">
                                         <TransitionGroup
@@ -534,11 +534,11 @@ export default class Lottery extends Component {
                                         <input type="file" onInput={this.handleInputListName} ref={this.listNameFileUpload} style={{ display: "none" }} />
                                         <FontAwesomeIcon icon={faCloudUploadAlt} style={{ bottom: 0, fontSize: "30px", cursor: "pointer" }} onClick={this.handleClickInputFile} />
                                     </>}
+                                {typeOfRoll == 0 ?
+                                    <div className={"text-center mt-2"} style={currentPrize <= prizeBeginMutiple ? { bottom: "10em" } : { marginTop: "2em" }}>
+                                        <Button style={{ padding: "1em 4em" }} disabled={isClickedRoll} variant="contained" color="secondary" onClick={!womanMode ? currentPrize <= prizeBeginMutiple ? this.setRandom : this.setMultipleRandom : this.setWomenRandom}>Roll</Button>
+                                    </div> : null}
                             </div>
-                            {typeOfRoll == 0 ?
-                                <div className={"text-center mt-2"} style={currentPrize <= prizeBeginMutiple ? { bottom: "10em" } : { marginTop: "2em" }}>
-                                    <Button style={{ padding: "1em 4em" }} disabled={isClickedRoll} variant="contained" color="secondary" onClick={!womanMode ? currentPrize <= prizeBeginMutiple ? this.setRandom : this.setMultipleRandom : this.setWomenRandom}>Roll</Button>
-                                </div> : null}
                         </Paper>
                     </div>
                     {typeOfRoll == 0 ?
