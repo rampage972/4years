@@ -482,7 +482,11 @@ export default class Lottery extends Component {
                                     </Tabs>
                                 </Paper>
                                 : null}
-                            <img src="/images/banner.png" alt="" style={{ width: "200px", marginBottom: "1em", marginTop: "1em" }} align="right" />
+                            <div className="d-flex justify-content-between pt-4">
+
+                                <img src="/images/left-banner.png" alt="" style={{ width: "18em" }} />
+                                <img src="/images/banner.png" alt="" style={{ width: "200px" }} />
+                            </div>
                             <div className="row justify-content-md-center" style={typeOfRoll == 0 ? { width: "100%", textAlign: "center", margin: 0, position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" } : { margin: 0, textAlign: "center", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
                                 {typeOfRoll == 0 ? currentPrize !== -1 ? currentPrize <= prizeBeginMutiple ?
                                     <div className="col-md-12">
