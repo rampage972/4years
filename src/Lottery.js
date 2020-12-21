@@ -11,9 +11,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import userName from './fintech_full.json'
 import 'swiper/swiper.scss';
 import Wheel from './Wheel';
+import account from './login.json'
 const confetti = require('canvas-confetti')
 const random = require('random')
 const RandomOrg = require('random-org');
+
 const randomOrg = new RandomOrg({ apiKey: 'b558199b-0a92-43cb-991b-23551659a901' });
 SwiperCore.use([Autoplay]);
 const AccordionSummary = withStyles({
@@ -121,26 +123,15 @@ export default class Lottery extends Component {
 
     }
     componentWillMount = () => {
-        // let { classicRand, mordermRand } = this.state
-        // let intervalMap = setInterval(() => {
-        //     let classicRanNumber = Math.floor(Math.random() * 100);
-        //     let mordermRanNumber = random.int(0, 100)
-        //     if (classicRand[classicRanNumber] == null)
-        //         classicRand[classicRanNumber] = 0
-        //     else classicRand[classicRanNumber]++
-        //     if (mordermRand[mordermRanNumber] == null)
-        //         mordermRand[mordermRanNumber] = 0
-        //     else mordermRand[mordermRanNumber]++
-        //     this.setState({ classicRand, mordermRand })
-        // }, 100)
-        // // setTimeout(() => {
-        // //     clearInterval(intervalMap)
-        // //     console.log(classicRand)
-        // //     console.log(mordermRand)
-        // // }, 10000)
-        let { listUser, currentUser, listWinner, currentPrize } = this.state
-        listUser = userName
-        this.setState({ listUser, listWinner })
+        if (localStorage.getItem("username") && localStorage.getItem("password") && localStorage.getItem("username") == account.username && localStorage.getItem("password") == account.password) {
+
+            let { listUser, currentUser, listWinner, currentPrize } = this.state
+            listUser = userName
+            this.setState({ listUser, listWinner })
+        }
+        else {
+            this.props.history.push("/login")
+        }
     }
     componentDidMount = () => {
         // if(this.state.prizeBeginMutiple
