@@ -1,5 +1,4 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React from 'react'
 import Alert from '@material-ui/lab/Alert';
 import account from './login.json'
 import './Login.scss';

@@ -1,0 +1,28 @@
+{
+  "reward": [
+    {
+      "name": "Giải Nhất",
+      "prize": 3000000,
+      "isChoosen": false,
+      "numberOfPrize": 1
+    },
+    {
+      "name": "Giải Nhì",
+      "prize": 2000000,
+      "isChoosen": false,
+      "numberOfPrize": 1
+    },
+    {
+      "name": "Giải Ba",
+      "prize": 1000000,
+      "isChoosen": false,
+      "numberOfPrize": 1
+    },
+    {
+      "name": "Giải Khuyến Khích",
+      "prize": 500000,
+      "isChoosen": true,
+      "numberOfPrize": 8
+    }
+  ]
+}

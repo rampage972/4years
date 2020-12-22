@@ -5,39 +5,39 @@ import SwiperCore, { Autoplay } from 'swiper';
 import { withStyles } from '@material-ui/core/styles';
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import { Button, Collapse, List, ListItem, Typography, Paper, Tab, Tabs, TableBody, TableCell, TableRow, TableHead, Table, TableContainer, AccordionSummary as MuiAccordionSummary, Accordion, AccordionDetails, IconButton } from '@material-ui/core';
+import { Button, Collapse, List, ListItem, Typography, Paper, Tab, Tabs, TableBody, TableCell, TableRow, TableHead, Table, TableContainer, AccordionSummary as MuiAccordionSummary, Accordion, AccordionDetails, IconButton, Backdrop } from '@material-ui/core';
 import { faCloudUploadAlt, faDollarSign, faDownload, faFileExport, faMoneyBillWave } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import userName from './fintech_full.json'
+import QRCode from 'qrcode'
+import { openGame, closeGame,addWinner } from './services'
+import './button.css'
 import 'swiper/swiper.scss';
-import Wheel from './Wheel';
-import account from './login.json'
+import account from './Login/login.json'
+import tmpReward from './reward.json'
+const reward = tmpReward.reward
 const confetti = require('canvas-confetti')
 const random = require('random')
 const RandomOrg = require('random-org');
-
+const dayjs = require('dayjs')
 const randomOrg = new RandomOrg({ apiKey: 'b558199b-0a92-43cb-991b-23551659a901' });
 SwiperCore.use([Autoplay]);
 const AccordionSummary = withStyles({
     root: {
         backgroundColor: 'rgba(0, 0, 0, .03)',
     },
+
 })(MuiAccordionSummary);
 export default class Lottery extends Component {
     constructor() {
         super()
         this.state = {
             isShowListWinner: false,
-            womanMode: false,
-            womenDayPrize: ['Pizzas', 'Sandwiches', 'Salads', 'Soup', 'Japanese food', 'Pastas'],
+            isShowGetListUser: true,
+            isEndOfList: false,
             listWomenPrize: [],
             currentIndexWomen: 0,
-            typeOfRoll: 0,
             speedAutoPlay: 100,
             autoPlay: { delay: 0 },
-            csvData: [
-                ["Giải đậc biệt", "Giải nhất", "Giải nhì", "Giải ba", "Giải tư", "Giải 5"],
-            ],
             listUser: [
             ],
             currentUser: {
@@ -63,8 +63,6 @@ export default class Lottery extends Component {
                     id: 1,
                 }
             ],
-            classicRand: [],
-            mordermRand: [],
             isClickedRoll: false,
             interval: "",
             intervalMultiple: "",
@@ -72,72 +70,24 @@ export default class Lottery extends Component {
             currentPrize: 3,
             listWinner: [[], [], [], [], [], []],
             listRandomNum: [],
-            reward: [
-                // {
-                //     name: "Giải Đặc Biệt",
-                //     prize: 5000000,
-                //     isChoosen: false,
-                //     numberOfPrize: 1,
-                // }
-                // ,
-                {
-                    name: "Giải Nhất",
-                    prize: 3000000,
-                    isChoosen: false,
-                    numberOfPrize: 1
-                }
-                ,
-                {
-                    name: "Giải Nhì",
-                    prize: 2000000,
-                    isChoosen: false,
-                    numberOfPrize: 1
-                }
-                ,
-                {
-                    name: "Giải Ba",
-                    prize: 1000000,
-                    isChoosen: false,
-                    numberOfPrize: 1
-                }
-                ,
-                {
-                    name: "Giải Khuyến Khích",
-                    prize: 500000,
-                    isChoosen: true,
-                    numberOfPrize: 8
-                }
-                // ,
-                // {
-                //     name: "Giải Năm",
-                //     prize: 100000,
-                //     isChoosen: false,
-                //     numberOfPrize: 50
-                // }
-                // ,
-            ]
+            reward,
+            listUserQR: [],
         }
         this.listNameFileUpload = React.createRef()
     }
-    handleChangeNumberOfRoll = () => {
 
-    }
+
+
     componentWillMount = () => {
         if (localStorage.getItem("username") && localStorage.getItem("password") && localStorage.getItem("username") == account.username && localStorage.getItem("password") == account.password) {
-
-            let { listUser, currentUser, listWinner, currentPrize } = this.state
-            listUser = userName
-            this.setState({ listUser, listWinner })
         }
         else {
             this.props.history.push("/login")
         }
     }
     componentDidMount = () => {
-        // if(this.state.prizeBeginMutiple
-        // this.spliceArray(this.state.numberOfRoll)
         document.addEventListener("keydown", this.my_onkeydown_handler);
-        // this.setMultipleRandom()
+
     }
     my_onkeydown_handler = (event) => {
         switch (event.keyCode) {
@@ -146,17 +96,79 @@ export default class Lottery extends Component {
                 // event.keyCode = 0;
                 window.status = "F5 disabled";
                 break;
-            case 89: // 'Y'
-                let { womanMode, listUser } = this.state
-                for (let i = 1; i <= 9; i++) {
-                    listUser.push({
-                        id: i
-                    })
-                }
-                this.setState({ womanMode: !womanMode, currentPrize: 0, listUser })
-                break;
         }
     }
+
+    handleGetListUser = () => {
+        let data = {
+            "requestDate": dayjs().format("YYYYMMDDHHmmss"),
+            "requestId": "a0c2b554-4483-4d31-80a4-d4b5e9354ec9",
+            "status": 0
+        }
+        closeGame(data).then(async res => {
+            if (res.data.errorCode == "00") {
+                let listUserQR = []
+                await
+                    res.data.data.map(async (item, key) => {
+                        let strQr
+                        QRCode.toDataURL("bank:VNPTPAY|receiver_id:" + item.phoneNumber + "|transfer_type:MYQRTRANSFER|amount:0").then(data => {
+                            strQr = data
+                            listUserQR.push({
+                                id: key,
+                                srcQR: strQr,
+                                phoneNumber: item.phoneNumber
+                            })
+                        })
+
+                    })
+                this.setState({ listUser: listUserQR, isShowGetListUser: false, currentUser: listUserQR[0] })
+            }
+            else if (res.data.errorCode == "06") {
+                let dataOpen = {
+                    "requestDate": dayjs().format("YYYYMMDDHHmmss"),
+                    "requestId": "a0c2b554-4483-4d31-80a4-d4b5e9354ec9",
+                    "status": 1
+                }
+                openGame(dataOpen).then(res => {
+                    if (res.data.errorCode == "00") {
+                        this.handleGetListUser()
+                    }
+                })
+            }
+        }).catch(err => {
+            console.log(err)
+            this.setState({ isShowGetListUser: false })
+
+        })
+    }
+
+    handleAddWinner = (phoneNumber, prizeDetail) => {
+        let data = {
+            "requestDate": dayjs().format("YYYYMMDDHHmmss"),
+            "requestId": "a0c2b554-4483-4d31-80a4-d4b5e9354ec9",
+            phoneNumber,
+            prizeDetail: prizeDetail.name + ": " + prizeDetail.prize
+        }
+        addWinner(data).then(res => {
+            if (res.data.errorCode == "00") {
+               
+            }
+        })
+    }
+
+    handleCreateNewTurn = () => {
+        let data = {
+            "requestDate": dayjs().format("YYYYMMDDHHmmss"),
+            "requestId": "a0c2b554-4483-4d31-80a4-d4b5e9354ec9",
+            "status": 1
+        }
+        openGame(data).then(res => {
+            if (res.data.errorCode == "00") {
+                this.setState({ listUser: [], isShowGetListUser: true })
+            }
+        })
+    }
+
     spliceArray = (number) => {
         let { listUser, listUserDivine } = this.state
         let indexArr = 0
@@ -170,111 +182,88 @@ export default class Lottery extends Component {
         this.setState({ listUserDivine })
     }
 
+
+
     setRandom = () => {
-        let { listUser, listWinner, currentPrize, isClickedRoll, isShowListWinner } = this.state
-        let randomNumber
-        let trullyRandomNumber
-        randomOrg.generateIntegers({ min: 0, max: listUser.length - 1, n: 1 })
-            .then(function (result) {
-                trullyRandomNumber = result.random.data[0]
+        let { listUser, listWinner, currentPrize, isClickedRoll, reward } = this.state
+        if (listUser.length == 0) {
+            this.setState({ isEndOfList: true })
+        }
+        else if (listUser.length == 1) {
+            listWinner[currentPrize].push(listUser[0].phoneNumber)
+            this.handleAddWinner(listUser[0].phoneNumber, reward[currentPrize])
+            listUser.splice(0, 1)
+            this.setState({ listWinner, listUser, interval: "", isClickedRoll: false })
+            let myCanvas = document.getElementById('fireWork')
+            let myConfetti = confetti.create(myCanvas, {
+                resize: true,
+                useWorker: true
             });
-        if (!isClickedRoll) {
-            this.setState({ isClickedRoll: true })
-            // if (currentPrize == 0) {
-            //     setTimeout(() => {
-            //       let intervalAutoPlay=  setInterval(() => {
-            //             let { speedAutoPlay } = this.state
-            //             speedAutoPlay += 10
-            //             this.setState({ speedAutoPlay })
+            myConfetti({
+                particleCount: 300,
+                spread: 60,
+                origin: { y: 0.6 }
+            });
+        }
+        else {
+            let randomNumber
+            let trullyRandomNumber
+            // randomOrg.generateIntegers({ min: 0, max: listUser.length - 1, n: 1 })
+            //     .then(function (result) {
+            //         trullyRandomNumber = result.random.data[0]
+            //     });
+            trullyRandomNumber = [random.int(0, listUser.length - 1)]
+            if (!isClickedRoll) {
+                this.setState({ isClickedRoll: true })
+                // if (currentPrize == 0) {
+                //     setTimeout(() => {
+                //       let intervalAutoPlay=  setInterval(() => {
+                //             let { speedAutoPlay } = this.state
+                //             speedAutoPlay += 10
+                //             this.setState({ speedAutoPlay })
 
-            //         },100)
-            //         setTimeout
-            //     }, 2000)
-            // }
-            // else 
-            {
+                //         },100)
+                //         setTimeout
+                //     }, 2000)
+                // }
+                // else 
+                {
 
-                let interval = setInterval(() => {
-                    randomNumber = [random.int(0, listUser.length - 1)]
-                    this.setState({ currentUser: listUser[randomNumber], currentPosition: randomNumber })
-                }, 100)
-                this.setState({ interval }, () => {
-                    let time = 5000
-                    if (currentPrize == 3) time = 3000
-                    setTimeout(() => {
-                        clearInterval(this.state.interval)
-                        this.setState({ currentUser: listUser[trullyRandomNumber], currentPosition: trullyRandomNumber })
-                        listWinner[currentPrize].push(listUser[trullyRandomNumber])
-                        listUser.splice(trullyRandomNumber, 1)
-                        this.setState({ listWinner, listUser, interval: "", isClickedRoll: false })
-                        let myCanvas = document.getElementById('fireWork')
-                        let myConfetti = confetti.create(myCanvas, {
-                            resize: true,
-                            useWorker: true
-                        });
-                        myConfetti({
-                            particleCount: 300,
-                            spread: 60,
-                            origin: { y: 0.6 }
-                        });
-                    }, time)
-                })
+                    let interval = setInterval(() => {
+                        randomNumber = [random.int(0, listUser.length - 1)]
+                        this.setState({ currentUser: listUser[randomNumber], currentPosition: randomNumber })
+                    }, 100)
+                    this.setState({ interval }, () => {
+                        let time = 5000
+                        if (currentPrize == 3) time = 3000
+                        setTimeout(() => {
+                            clearInterval(this.state.interval)
+                            this.setState({ currentUser: listUser[trullyRandomNumber], currentPosition: trullyRandomNumber })
+                            listWinner[currentPrize].push(listUser[trullyRandomNumber].phoneNumber)
+                            this.handleAddWinner(listUser[trullyRandomNumber].phoneNumber, reward[currentPrize])
+                            listUser.splice(trullyRandomNumber, 1)
+                            this.setState({ listWinner, listUser, interval: "", isClickedRoll: false })
+                            let myCanvas = document.getElementById('fireWork')
+                            let myConfetti = confetti.create(myCanvas, {
+                                resize: true,
+                                useWorker: true
+                            });
+                            myConfetti({
+                                particleCount: 300,
+                                spread: 60,
+                                origin: { y: 0.6 }
+                            });
+                        }, time)
+                    })
+                }
             }
         }
     }
-    setWomenRandom = () => {
-        let { listUser, listWinner, currentPrize, isClickedRoll } = this.state
-        let randomNumber
-        let trullyRandomNumber
-        randomOrg.generateIntegers({ min: 0, max: listUser.length - 1, n: 1 })
-            .then(function (result) {
-                trullyRandomNumber = result.random.data[0]
-            });
-        if (!isClickedRoll) {
-            this.setState({ isClickedRoll: true })
-            // if (currentPrize == 0) {
-            //     setTimeout(() => {
-            //       let intervalAutoPlay=  setInterval(() => {
-            //             let { speedAutoPlay } = this.state
-            //             speedAutoPlay += 10
-            //             this.setState({ speedAutoPlay })
 
-            //         },100)
-            //         setTimeout
-            //     }, 2000)
-            // }
-            // else 
-            {
 
-                let interval = setInterval(() => {
-                    randomNumber = [random.int(0, listUser.length - 1)]
-                    this.setState({ currentUser: listUser[randomNumber], currentPosition: randomNumber })
-                }, 100)
-                this.setState({ interval }, () => {
-                    let time = 6000
-                    if (currentPrize == 0) time = 10000
-                    setTimeout(() => {
-                        clearInterval(this.state.interval)
-                        this.setState({ currentUser: listUser[trullyRandomNumber], currentPosition: trullyRandomNumber })
-                        listWinner[currentPrize].push(listUser[trullyRandomNumber])
-                        this.setState({ listWinner, listUser, interval: "", isClickedRoll: false })
-                        let myCanvas = document.getElementById('fireWork')
-                        let myConfetti = confetti.create(myCanvas, {
-                            resize: true,
-                            useWorker: true
-                        });
-                        myConfetti({
-                            particleCount: 300,
-                            spread: 60,
-                            origin: { y: 0.6 }
-                        });
-                    }, time)
-                })
-            }
-        }
-    }
+
     setMultipleRandom = () => {
-        let { listUserDivine, listCurrentUser, listWinner, currentPrize, listRandomNum, isClickedRoll, csvData } = this.state
+        let { listUserDivine, listCurrentUser, listWinner, currentPrize, listRandomNum, isClickedRoll } = this.state
         let listUser = []
         let listTrueRandom = []
         for (let i = 0; i < listUserDivine.length; i++) {
@@ -351,22 +340,7 @@ export default class Lottery extends Component {
         linkElement.setAttribute('download', exportFileDefaultName);
         linkElement.click();
     }
-    handleChangeTypeOfRoll = (e, value) => {
-        this.setState({ typeOfRoll: value })
-    }
-    handleSelectWomenPrize = (prize) => {
-        let { currentIndexWomen, listWomenPrize, listWomen, womenDayPrize } = this.state
-        let tmpWinner = {
-            name: listWomen[currentIndexWomen],
-            prize: womenDayPrize[prize[0]]
-        }
-        listWomenPrize.push(tmpWinner)
-        currentIndexWomen++
-        setTimeout(() => {
 
-            this.setState({ listWomenPrize, currentIndexWomen })
-        }, 5000)
-    }
     handleInputListName = (e) => {
         const reader = new FileReader()
         reader.onload = event => {
@@ -386,232 +360,194 @@ export default class Lottery extends Component {
         this.setState({ isShowListWinner })
     }
     render() {
-        const { speedAutoPlay, listUser, reward, autoPlay, currentUser, womenDayPrize, listWomenPrize, womanMode, prizeBeginMutiple,
-            currentPrize, interval, listWinner, listCurrentUser, isClickedRoll, intervalMultiple, typeOfRoll, isShowListWinner } = this.state
+        const {
+            speedAutoPlay, listUser, reward, autoPlay,
+            currentUser, isShowGetListUser, prizeBeginMutiple,
+            isEndOfList, currentPrize, interval, listWinner,
+            listCurrentUser, isClickedRoll, intervalMultiple, isShowListWinner
+        } = this.state
         return (
             <div className="container-fluid" style={{ background: "url('/images/background.png')", minHeight: "100vh", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
-                <audio style={{ display: "none" }} src="/background.mp3" autoPlay={true}></audio>
+                {/* <audio style={{ display: "none" }} src="/background.mp3" autoPlay={true}></audio> */}
                 <div style={{ display: "none" }}>
-
-                    {listUser.map(currentUser => (
-                        <img key={currentUser.id} src={require("./QRFINTECH/" + currentUser.id + ".png")} alt="" />
-                    ))}
                 </div>
                 <div className="row pt-5">
 
                     <div className={"col-md-3"} style={{ minHeight: "85vh" }}>
-                        {!womanMode ?
-                            <Paper style={{ height: "100%", position: "relative" }}>
-                                <img src="/images/background-list.png" alt="" style={{ position: "absolute", width: " 100%", height: "100%" }} />
-                                {typeOfRoll == 0 ?
-                                    <div >
 
-                                        <h3 className="text-center position-relative" style={{ padding: "10px" }}>
-                                            Danh sách giải thưởng
+                        <Paper style={{ height: "100%", position: "relative" }}>
+                            <img src="/images/background-list.png" alt="" style={{ position: "absolute", width: " 100%", height: "100%" }} />
+                            <div >
+
+                                <h3 className="text-center position-relative" style={{ padding: "10px" }}>
+                                    Danh sách giải thưởng
                             </h3>
-                                        <div className="sb sb-2">
-                                            <small>section break 2</small>
-                                            <hr className="section-break-2" />
-                                        </div>
-                                        <div style={{ padding: "10px" }}>
-                                            {reward.map((item, key) => (
-                                                <Paper key={key} className={item.isChoosen ? "mb-2 border-Paper" : "mb-2"} elevation={item.isChoosen ? 4 : 1} onClick={() => this.handleClickPrize(key)} style={{ cursor: "pointer" }}>
-                                                    <div className="row">
-                                                        <div className="col-md-3 content-middle">
-                                                            <img style={{ width: "100%" }} src={"/rewardIcon/" + (key + 1) + ".png"} alt="" />
-                                                        </div>
-                                                        <div className="col-md-9">
-                                                            <h2>{item.name}</h2>
-                                                            <span style={{ color: "green" }}><FontAwesomeIcon icon={faMoneyBillWave} /> {item.prize.toLocaleString('ja-JP') + " VNĐ"}</span>
-                                                            <span style={{ paddingLeft: "1em", color: "red", fontWeight: "bold" }}>{listWinner[key].length + "/" + item.numberOfPrize}</span>
-                                                        </div>
-                                                    </div>
-                                                </Paper>
-                                            ))}
-                                        </div>
-                                    </div>
-                                    :
-                                    <div className="position-relative mt-3">
-                                        <TableContainer component={Paper}>
-                                            <Table aria-label="simple table" className="table mb-0 table-striped">
-                                                <TableHead>
-                                                    <TableRow>
-                                                        <TableCell align="center" style={{ fontWeight: "bold", fontSize: "2em" }}>Họ Và Tên</TableCell>
-                                                        <TableCell align="center" style={{ fontWeight: "bold", fontSize: "2em" }}>Giải Thưởng</TableCell>
-                                                    </TableRow>
-                                                </TableHead>
-                                                <TableBody>
-                                                    {listWomenPrize.map((itemWomenPrize, keyItemWomenPrize) => (
-                                                        <TableRow key={keyItemWomenPrize}>
-                                                            <TableCell component="th" scope="row" align="center">
-                                                                {itemWomenPrize.name}
-                                                            </TableCell>
-                                                            <TableCell align="center">{itemWomenPrize.prize}</TableCell>
-                                                        </TableRow>
-                                                    ))}
-                                                </TableBody>
-                                            </Table>
-                                        </TableContainer>
-                                    </div>
-                                }
-                            </Paper> : null}
+                                <div className="sb sb-2">
+                                    <small>section break 2</small>
+                                    <hr className="section-break-2" />
+                                </div>
+                                <div style={{ padding: "10px" }}>
+                                    {reward.map((item, key) => (
+                                        <Paper key={key} className={item.isChoosen ? "mb-2 border-Paper" : "mb-2"} elevation={item.isChoosen ? 4 : 1} onClick={() => this.handleClickPrize(key)} style={{ cursor: "pointer" }}>
+                                            <div className="row">
+                                                <div className="col-md-3 content-middle">
+                                                    <img style={{ width: "100%" }} src={"/rewardIcon/" + (key + 1) + ".png"} alt="" />
+                                                </div>
+                                                <div className="col-md-9">
+                                                    <h2>{item.name}</h2>
+                                                    <span style={{ color: "green" }}><FontAwesomeIcon icon={faMoneyBillWave} /> {item.prize.toLocaleString('ja-JP') + " VNĐ"}</span>
+                                                    <span style={{ paddingLeft: "1em", color: "red", fontWeight: "bold" }}>{listWinner[key].length + "/" + item.numberOfPrize}</span>
+                                                </div>
+                                            </div>
+                                        </Paper>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="text-center">
+                                <button className="bttn-jelly bttn-md bttn-danger" onClick={this.handleCreateNewTurn}>Huỷ Chốt Danh Sách</button>
+                            </div>
+                        </Paper>
                     </div>
                     <div className={"col-md-6"} style={{ minHeight: "85vh" }}>
                         <Paper style={{ backgroundColor: "rgb(255,227,229)", height: "100%", backgroundImage: "url('/images/background-roll.jpg')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
-                            {womanMode ?
-                                <Paper>
-                                    <Tabs
-                                        centered
-                                        value={typeOfRoll}
-                                        indicatorColor="secondary"
-                                        textColor="secondary"
-                                        onChange={this.handleChangeTypeOfRoll}
-                                        aria-label="disabled tabs example"
-                                    >
-                                        <Tab label="Theo Giải" />
-                                        <Tab label="Theo Người" />
-                                    </Tabs>
-                                </Paper>
-                                : null}
+
                             <div className="d-flex justify-content-between pt-4">
 
                                 <img src="/images/left-banner.png" alt="" style={{ width: "18em" }} />
                                 <img src="/images/banner.png" alt="" style={{ width: "200px" }} />
                             </div>
-                            <div className="row justify-content-md-center" style={typeOfRoll == 0 ? { width: "100%", textAlign: "center", margin: 0, position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" } : { margin: 0, textAlign: "center", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
-                                {typeOfRoll == 0 ? currentPrize !== -1 ? currentPrize <= prizeBeginMutiple ?
-                                    <div className="col-md-12">
-                                        <TransitionGroup
-                                            style={{ position: "relative" }}
-                                        >
-                                            <CSSTransition
-                                                key={currentUser.id}
-                                                timeout={100}
-                                                classNames="lottery-avatar"
-                                            >
-                                                {!womanMode ? <img className="moveToList" style={{ width: "250px", height: "250px" }} src={require("./QRFINTECH/" + currentUser.id + ".png")} alt="" />
-                                                    : <img className="moveToList" style={{ width: "250px", height: "250px" }} src={require("./WomenDay/" + currentUser.id + ".jpg")} alt="" />}
-                                            </CSSTransition>
-                                        </TransitionGroup>
-                                        {interval == "" && currentPrize < 2 && listWinner[currentPrize].length > 0 ?
-                                            <img className="moveToList" src={"/images/frame" + (currentPrize) + ".png"} alt="" style={{ width: "250px", height: "250px", transform: "scale(1.2)" }} />
-                                            : null
-                                        }
-                                        <canvas id="fireWork"></canvas>
-                                        {!womanMode ? <img style={{ width: "250px", height: "250px" }} src={require("./QRFINTECH/" + currentUser.id + ".png")} alt="" /> :
-                                            <img className="moveToList" style={{ width: "250px", height: "250px" }} src={require("./WomenDay/" + currentUser.id + ".jpg")} alt="" />}
-                                        {/* {!womanMode ? <div className="col-md-12 pt-4">
-                                            <p className="font-weight-bold">{currentUser.rawName}</p>
-                                        </div>
-                                            : null} */}
+                            <div className="row justify-content-md-center" style={{ width: "100%", textAlign: "center", margin: 0, position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
+                                {!isEndOfList ?
+                                    currentPrize !== -1 ?
+                                        currentPrize <= prizeBeginMutiple ? //Chọn lựa quay 1 ảnh 1 lúc
+                                            <div className="col-md-12">
+                                                <TransitionGroup
+                                                    style={{ position: "relative" }}
+                                                >
+                                                    <CSSTransition
+                                                        key={currentUser.id}
+                                                        timeout={100}
+                                                        classNames="lottery-avatar"
+                                                    >
+                                                        <>
+                                                            <img className="moveToList" style={{ width: "250px", height: "250px" }} src={currentUser.srcQR} alt="" />
+                                                        </>
+                                                    </CSSTransition>
+                                                </TransitionGroup>
+                                                {interval == "" && currentPrize < 2 && listWinner[currentPrize].length > 0 ?
+                                                    <img className="moveToList" src={"/images/frame" + (currentPrize) + ".png"} alt="" style={{ width: "250px", height: "250px", transform: "scale(1.2)" }} />
+                                                    : null
+                                                }
+                                                <canvas id="fireWork"></canvas>
 
-                                    </div>
-                                    :
-                                    <div className="">
-                                        {listCurrentUser.map((user, indexUser) => (
-                                            <div className="prizeLow" key={indexUser}>
-                                                <img style={{ width: "100px", height: "130px" }} src={require("./QRFINTECH/" + currentUser.id + ".png")} alt="" />
-                                                {intervalMultiple == "" ? <p>{user.rawName}</p> : null}
+                                                <img style={{ width: "250px", height: "250px" }} src={currentUser.srcQR} alt="" />
+
                                             </div>
-                                        ))}
+                                            : // Quay nhiều ảnh 1 lúc
+                                            <div className="">
+                                                {listCurrentUser.map((user, indexUser) => (
+                                                    <div className="prizeLow" key={indexUser}>
+                                                        <img style={{ width: "100px", height: "130px" }} src={require("./QRFINTECH/" + currentUser.id + ".png")} alt="" />
+                                                        {intervalMultiple == "" ? <p>{user.rawName}</p> : null}
+                                                    </div>
+                                                ))}
 
 
-                                    </div>
-                                    :
-                                    <Swiper
-                                        freeMode={true}
-                                        loop={true}
-                                        speed={speedAutoPlay}
-                                        autoplay={autoPlay}
-                                        spaceBetween={0}
-                                        slidesPerView={4}
-                                    // onSlideChange={() => console.log('slide change')}
-                                    // onSwiper={(swiper) => console.log(swiper)}
-                                    >
-                                        {listUser.map((user, indexUser) => (
-                                            <SwiperSlide key={indexUser}> <img style={{ width: "100%", height: "150px" }} src={require("./QRFINTECH/" + currentUser.id + ".png")} alt="" /></SwiperSlide>
-                                        ))}
-                                    </Swiper>
-                                    : <>
-                                        <Wheel items={womenDayPrize} onSelectItem={(prize) => this.handleSelectWomenPrize(prize)} />
-                                        <input type="file" onInput={this.handleInputListName} ref={this.listNameFileUpload} style={{ display: "none" }} />
-                                        <FontAwesomeIcon icon={faCloudUploadAlt} style={{ bottom: 0, fontSize: "30px", cursor: "pointer" }} onClick={this.handleClickInputFile} />
-                                    </>}
-                                {typeOfRoll == 0 ?
+                                            </div>
+                                        :
+                                        <Swiper
+                                            freeMode={true}
+                                            loop={true}
+                                            speed={speedAutoPlay}
+                                            autoplay={autoPlay}
+                                            spaceBetween={0}
+                                            slidesPerView={4}
+                                        // onSlideChange={() => console.log('slide change')}
+                                        // onSwiper={(swiper) => console.log(swiper)}
+                                        >
+                                            {listUser.map((user, indexUser) => (
+                                                <SwiperSlide key={indexUser}> <img style={{ width: "100%", height: "150px" }} src={require("./QRFINTECH/" + currentUser.id + ".png")} alt="" /></SwiperSlide>
+                                            ))}
+                                        </Swiper>
+                                    : <h3>
+                                        Đã quay hết số người tham dự
+                                    </h3>
+                                }
+                                {!isEndOfList ?
                                     <div className={"text-center mt-2"} style={currentPrize <= prizeBeginMutiple ? { bottom: "10em" } : { marginTop: "2em" }}>
-                                        <Button style={{ padding: "1em 4em", backgroundColor: "#ec1c24", color: "white" }} disabled={isClickedRoll} variant="contained" onClick={!womanMode ? currentPrize <= prizeBeginMutiple ? this.setRandom : this.setMultipleRandom : this.setWomenRandom}>Roll</Button>
+                                        <Button style={{ padding: "1em 4em", backgroundColor: "#ec1c24", color: "white" }} disabled={isClickedRoll} variant="contained" onClick={currentPrize <= prizeBeginMutiple ? this.setRandom : this.setMultipleRandom}>Roll</Button>
                                     </div> : null}
                             </div>
                         </Paper>
                     </div>
-                    {typeOfRoll == 0 ?
-                        <div className="col-md-3">
-                            {!womanMode ?
-                                <Paper style={{ height: "100%", position: "relative" }}>
-                                    <div style={{ backgroundImage: "url('/images/confetti.gif')" }}>
 
-                                        {/* <img src="/images/confetti.gif" alt="" style={{ width: "100%", position: "absolute" }} />
-                                <img src="/images/confetti-flag.png" alt="" style={{ width: "100%", position: "absolute" }} /> */}
-                                        <h3 className="text-center" style={{ padding: "10px" }}>
-                                            Danh sách trúng giải
+                    <div className="col-md-3">
+                        <Paper style={{ height: "100%", position: "relative" }}>
+                            <div style={{ backgroundImage: "url('/images/confetti.gif')" }}>
+                                <h3 className="text-center" style={{ padding: "10px" }}>
+                                    Danh sách trúng giải
                             </h3>
-                                    </div>
-                                    <div className="sb sb-2">
-                                        <hr className="section-break-2" />
-                                    </div>
-                                    {isShowListWinner ?
-                                        <div>
-                                            <List
-                                                component="nav"
-                                            >
-                                                {listWinner.map((item, key) => {
-                                                    if (item.length > 0)
-                                                        return (
-                                                            <div key={key} className="listWinner">
-                                                                <Accordion square defaultExpanded={true} >
-                                                                    <AccordionSummary aria-controls="panel1d-content" id="panel1d-header" expandIcon={<ExpandMoreIcon />}>
-                                                                        <Typography className="font-weight-bold">
-                                                                            {reward[key].name}</Typography>
-                                                                    </AccordionSummary>
-                                                                    <AccordionDetails>
-                                                                        <table style={{ width: "100%" }} >
-                                                                            <tbody>
+                            </div>
+                            <div className="sb sb-2">
+                                <hr className="section-break-2" />
+                            </div>
+                            {isShowListWinner ?
+                                <div>
+                                    <List
+                                        component="nav"
+                                    >
+                                        {listWinner.map((item, key) => {
+                                            if (item.length > 0)
+                                                return (
+                                                    <div key={key} className="listWinner">
+                                                        <Accordion square defaultExpanded={true} >
+                                                            <AccordionSummary aria-controls="panel1d-content" id="panel1d-header" expandIcon={<ExpandMoreIcon />}>
+                                                                <Typography className="font-weight-bold">
+                                                                    {reward[key].name}</Typography>
+                                                            </AccordionSummary>
+                                                            <AccordionDetails>
+                                                                <table style={{ width: "100%" }} >
+                                                                    <tbody>
 
-                                                                                {/* <div className="col-md-3 pt-2" key={index}>
+                                                                        {/* <div className="col-md-3 pt-2" key={index}>
                                                                                     <img title={user.rawName} key={index} style={{ width: "100%" }} src={require("./QRFINTECH/" + user.id + ".jpg")} alt="" />
                                                                                 </div> */}
-                                                                                {item.map((user, index) => (
-                                                                                    <tr className="pt-2" key={index}>
-                                                                                        <td style={{ width: "50%", textAlign: "center" }}>
-                                                                                            <p>{user.name}</p>
-                                                                                        </td>
-                                                                                        <td className="pl-3" style={{ width: "50%", textAlign: "center" }}>
-                                                                                            <p>{user.wnumber}</p>
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                ))}
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </AccordionDetails>
-                                                                </Accordion>
-                                                            </div>)
+                                                                        {item.map((user, index) => (
+                                                                            <tr className="pt-2" key={index}>
+                                                                                <td style={{ width: "50%", textAlign: "center" }}>
+                                                                                    <p>{user}</p>
+                                                                                </td>
+                                                                                {/* <td className="pl-3" style={{ width: "50%", textAlign: "center" }}>
+                                                                                    <p>{user.wnumber}</p>
+                                                                                </td> */}
+                                                                            </tr>
+                                                                        ))}
+                                                                    </tbody>
+                                                                </table>
+                                                            </AccordionDetails>
+                                                        </Accordion>
+                                                    </div>)
 
 
-                                                }
-                                                )}
-                                            </List>
-                                        </div>
-                                        : null
-                                    }
-                                    <div className="text-center">
-                                        <Button variant="contained" color="secondary" onClick={this.toggleShowListWinner}>{isShowListWinner ? "Ẩn danh sách" : "Hiện danh sách"}</Button>
-                                        {isShowListWinner ? <IconButton onClick={this.exportToJsonFile} >
-                                            <FontAwesomeIcon className="ml-2" icon={faDownload} />
-                                        </IconButton> : null}
-                                    </div>
-                                </Paper> : null}
-                        </div> : null}
+                                        }
+                                        )}
+                                    </List>
+                                </div>
+                                : null
+                            }
+                            <div className="text-center">
+                                <Button variant="contained" color="secondary" onClick={this.toggleShowListWinner}>{isShowListWinner ? "Ẩn danh sách" : "Hiện danh sách"}</Button>
+                                {isShowListWinner ? <IconButton onClick={this.exportToJsonFile} >
+                                    <FontAwesomeIcon className="ml-2" icon={faDownload} />
+                                </IconButton> : null}
+                            </div>
+                        </Paper>
+                    </div>
                 </div>
+                <Backdrop open={isShowGetListUser} style={{ backgroundColor: "white", zIndex: "100" }}>
+                    <button className="bttn-unite bttn-md bttn-primary" onClick={this.handleGetListUser}> Chốt danh sách</button>
+                </Backdrop>
+
             </div>
         )
     }
