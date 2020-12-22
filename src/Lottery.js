@@ -445,12 +445,12 @@ export default class Lottery extends Component {
                                             </div>
                                             : // Quay nhiều ảnh 1 lúc
                                             <div className="">
-                                                {listCurrentUser.map((user, indexUser) => (
+                                                {/* {listCurrentUser.map((user, indexUser) => (
                                                     <div className="prizeLow" key={indexUser}>
                                                         <img style={{ width: "100px", height: "130px" }} src={require("./QRFINTECH/" + currentUser.id + ".png")} alt="" />
                                                         {intervalMultiple == "" ? <p>{user.rawName}</p> : null}
                                                     </div>
-                                                ))}
+                                                ))} */}
 
 
                                             </div>
@@ -465,9 +465,9 @@ export default class Lottery extends Component {
                                         // onSlideChange={() => console.log('slide change')}
                                         // onSwiper={(swiper) => console.log(swiper)}
                                         >
-                                            {listUser.map((user, indexUser) => (
+                                            {/* {listUser.map((user, indexUser) => (
                                                 <SwiperSlide key={indexUser}> <img style={{ width: "100%", height: "150px" }} src={require("./QRFINTECH/" + currentUser.id + ".png")} alt="" /></SwiperSlide>
-                                            ))}
+                                            ))} */}
                                         </Swiper>
                                     : <h3>
                                         Đã quay hết số người tham dự
