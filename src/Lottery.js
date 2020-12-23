@@ -39,7 +39,7 @@ export default class Lottery extends Component {
             listWinnerWithoutPrize: [],
             speedAutoPlay: 100,
             autoPlay: { delay: 0 },
-            listUser: [
+            listUserIMG: [
             ],
             currentUser: {
                 id: 1,
@@ -72,7 +72,7 @@ export default class Lottery extends Component {
             listWinner: [[], [], [], [], [], []],
             listRandomNum: [],
             reward,
-            listUserQR: [],
+            listUserIMG: [],
         }
         this.listNameFileUpload = React.createRef()
     }
@@ -143,8 +143,8 @@ export default class Lottery extends Component {
         }
         closeGame(data).then(async res => {
             if (res.data.errorCode == "00") {
-                let listUserQR = []
-                this.setState({ listUser: [] }, async () => {
+                let listUserIMG = []
+                this.setState({ listUserIMG: [] }, async () => {
 
                     await
                         res.data.data.map(async (item, key) => {
@@ -152,7 +152,7 @@ export default class Lottery extends Component {
                                 let strQr
                                 QRCode.toDataURL("bank:VNPTPAY|receiver_id:" + item.phoneNumber + "|transfer_type:MYQRTRANSFER|amount:0").then(data => {
                                     strQr = data
-                                    listUserQR.push({
+                                    listUserIMG.push({
                                         id: key,
                                         srcQR: strQr,
                                         phoneNumber: item.phoneNumber
@@ -161,7 +161,7 @@ export default class Lottery extends Component {
                             }
 
                         })
-                    this.setState({ listUser: listUserQR, currentUser: listUserQR[0], isOpenNotiMessage: true })
+                    this.setState({ listUserIMG: listUserIMG, currentUser: listUserIMG[0], isOpenNotiMessage: true })
                 })
             }
             else if (res.data.errorCode == "06") {
@@ -204,20 +204,20 @@ export default class Lottery extends Component {
         }
         openGame(data).then(res => {
             if (res.data.errorCode == "00") {
-                this.setState({ listUser: [] })
+                this.setState({ listUserIMG: [] })
             }
         })
     }
 
     spliceArray = (number) => {
-        let { listUser, listUserDivine } = this.state
+        let { listUserIMG, listUserDivine } = this.state
         let indexArr = 0
         for (let i = 0; i < number; i++)  listUserDivine.push([])
-        let sizePerArr = (listUser.length / number).toFixed(0)
+        let sizePerArr = (listUserIMG.length / number).toFixed(0)
 
-        for (let i = 0; i < listUser.length; i++) {
+        for (let i = 0; i < listUserIMG.length; i++) {
             if (i + 1 == (indexArr + 1) * sizePerArr) indexArr++
-            listUserDivine[indexArr].push(listUser[i])
+            listUserDivine[indexArr].push(listUserIMG[i])
         }
         this.setState({ listUserDivine })
     }
@@ -225,15 +225,15 @@ export default class Lottery extends Component {
 
 
     setRandom = () => {
-        let { listUser, listWinner, currentPrize, isClickedRoll, reward, listWinnerWithoutPrize } = this.state
-        if (listUser.length == 0) {
+        let { listUserIMG, listWinner, currentPrize, isClickedRoll, reward, listWinnerWithoutPrize } = this.state
+        if (listUserIMG.length == 0) {
             this.setState({ isEndOfList: true })
         }
-        else if (listUser.length == 1) {
-            listWinner[currentPrize].push(listUser[0].phoneNumber)
-            this.handleAddWinner(listUser[0].phoneNumber, reward[currentPrize])
-            listUser.splice(0, 1)
-            this.setState({ listWinner, listUser, interval: "", isClickedRoll: false })
+        else if (listUserIMG.length == 1) {
+            listWinner[currentPrize].push(listUserIMG[0].phoneNumber)
+            this.handleAddWinner(listUserIMG[0].phoneNumber, reward[currentPrize])
+            listUserIMG.splice(0, 1)
+            this.setState({ listWinner, listUserIMG, interval: "", isClickedRoll: false })
             let myCanvas = document.getElementById('fireWork')
             let myConfetti = confetti.create(myCanvas, {
                 resize: true,
@@ -248,11 +248,11 @@ export default class Lottery extends Component {
         else {
             let randomNumber
             let trullyRandomNumber
-            // randomOrg.generateIntegers({ min: 0, max: listUser.length - 1, n: 1 })
+            // randomOrg.generateIntegers({ min: 0, max: listUserIMG.length - 1, n: 1 })
             //     .then(function (result) {
             //         trullyRandomNumber = result.random.data[0]
             //     });
-            trullyRandomNumber = [random.int(0, listUser.length - 1)]
+            trullyRandomNumber = [random.int(0, listUserIMG.length - 1)]
             if (!isClickedRoll) {
                 this.setState({ isClickedRoll: true })
                 // if (currentPrize == 0) {
@@ -270,20 +270,20 @@ export default class Lottery extends Component {
                 {
 
                     let interval = setInterval(() => {
-                        randomNumber = [random.int(0, listUser.length - 1)]
-                        this.setState({ currentUser: listUser[randomNumber], currentPosition: randomNumber })
+                        randomNumber = [random.int(0, listUserIMG.length - 1)]
+                        this.setState({ currentUser: listUserIMG[randomNumber], currentPosition: randomNumber })
                     }, 100)
                     this.setState({ interval }, () => {
                         let time = 5000
                         if (currentPrize == 3) time = 3000
                         setTimeout(() => {
                             clearInterval(this.state.interval)
-                            this.setState({ currentUser: listUser[trullyRandomNumber], currentPosition: trullyRandomNumber })
-                            listWinner[currentPrize].push(listUser[trullyRandomNumber].phoneNumber)
-                            listWinnerWithoutPrize.push(listUser[trullyRandomNumber].phoneNumber)
-                            this.handleAddWinner(listUser[trullyRandomNumber].phoneNumber, reward[currentPrize])
-                            listUser.splice(trullyRandomNumber, 1)
-                            this.setState({ listWinner, listUser, interval: "", isClickedRoll: false })
+                            this.setState({ currentUser: listUserIMG[trullyRandomNumber], currentPosition: trullyRandomNumber })
+                            listWinner[currentPrize].push(listUserIMG[trullyRandomNumber].phoneNumber)
+                            listWinnerWithoutPrize.push(listUserIMG[trullyRandomNumber].phoneNumber)
+                            this.handleAddWinner(listUserIMG[trullyRandomNumber].phoneNumber, reward[currentPrize])
+                            listUserIMG.splice(trullyRandomNumber, 1)
+                            this.setState({ listWinner, listUserIMG, interval: "", isClickedRoll: false })
                             let myCanvas = document.getElementById('fireWork')
                             let myConfetti = confetti.create(myCanvas, {
                                 resize: true,
@@ -305,7 +305,7 @@ export default class Lottery extends Component {
 
     setMultipleRandom = () => {
         let { listUserDivine, listCurrentUser, listWinner, currentPrize, listRandomNum, isClickedRoll } = this.state
-        let listUser = []
+        let listUserIMG = []
         let listTrueRandom = []
         for (let i = 0; i < listUserDivine.length; i++) {
             randomOrg.generateIntegers({ min: 0, max: listUserDivine[i].length - 1, n: 1 })
@@ -331,9 +331,9 @@ export default class Lottery extends Component {
                     listCurrentUser[i] = listUserDivine[i][listTrueRandom[i]]
                     listWinner[currentPrize].push(listCurrentUser[i])
                     listUserDivine[i].splice(listTrueRandom[i], 1)
-                    listUser = listUser.concat(listUserDivine[i])
+                    listUserIMG = listUserIMG.concat(listUserDivine[i])
                 }
-                this.setState({ listCurrentUser, listWinner, intervalMultiple: "", listUserDivine, listUser, isClickedRoll: false })
+                this.setState({ listCurrentUser, listWinner, intervalMultiple: "", listUserDivine, listUserIMG, isClickedRoll: false })
                 let myCanvas = document.getElementById('fireWork')
                 let myConfetti = confetti.create(myCanvas, {
                     resize: true,
@@ -403,7 +403,7 @@ export default class Lottery extends Component {
     }
     render() {
         const {
-            speedAutoPlay, listUser, reward, autoPlay,
+            speedAutoPlay, listUserIMG, reward, autoPlay,
             currentUser, prizeBeginMutiple,
             isEndOfList, currentPrize, interval, listWinner, isOpenNotiMessage,
             listCurrentUser, isClickedRoll, intervalMultiple, isShowListWinner
@@ -421,7 +421,7 @@ export default class Lottery extends Component {
                             {/* <img src="/images/background-list.png" alt="" style={{ position: "absolute", width: " 100%", height: "100%" }} /> */}
                             <div >
 
-                                <h3 className="text-center position-relative" style={{ padding: "10px" }}>
+                                <h3 className="text-center position-relative pt-4" style={{ padding: "10px" }}>
                                     Danh sách giải thưởng
                             </h3>
                                 <div className="sb sb-2">
@@ -505,7 +505,7 @@ export default class Lottery extends Component {
                                         // onSlideChange={() => console.log('slide change')}
                                         // onSwiper={(swiper) => console.log(swiper)}
                                         >
-                                            {/* {listUser.map((user, indexUser) => (
+                                            {/* {listUserIMG.map((user, indexUser) => (
                                                 <SwiperSlide key={indexUser}> <img style={{ width: "100%", height: "150px" }} src={require("./QRFINTECH/" + currentUser.id + ".png")} alt="" /></SwiperSlide>
                                             ))} */}
                                         </Swiper>
@@ -530,7 +530,7 @@ export default class Lottery extends Component {
                         <Paper style={{ height: "100%", position: "relative", backgroundColor: "transparent", height: "100%", backgroundImage: "url('/images/background-list.png')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
                             <div >
                                 <canvas id="confetti" className="position-absolute" style={{ width: "100%", height: "5em" }}></canvas>
-                                <h3 className="text-center" style={{ padding: "10px" }}>
+                                <h3 className="text-center pt-4" style={{ padding: "10px" }}>
                                     Danh sách trúng giải
                             </h3>
                             </div>
