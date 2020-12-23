@@ -36,6 +36,7 @@ export default class Lottery extends Component {
             isEndOfList: false,
             listWomenPrize: [],
             currentIndexWomen: 0,
+            listWinnerWithoutPrize: [],
             speedAutoPlay: 100,
             autoPlay: { delay: 0 },
             listUser: [
@@ -147,15 +148,17 @@ export default class Lottery extends Component {
 
                     await
                         res.data.data.map(async (item, key) => {
-                            let strQr
-                            QRCode.toDataURL("bank:VNPTPAY|receiver_id:" + item.phoneNumber + "|transfer_type:MYQRTRANSFER|amount:0").then(data => {
-                                strQr = data
-                                listUserQR.push({
-                                    id: key,
-                                    srcQR: strQr,
-                                    phoneNumber: item.phoneNumber
+                            if (this.state.listWinnerWithoutPrize.indexOf(item.phoneNumber) == -1) {
+                                let strQr
+                                QRCode.toDataURL("bank:VNPTPAY|receiver_id:" + item.phoneNumber + "|transfer_type:MYQRTRANSFER|amount:0").then(data => {
+                                    strQr = data
+                                    listUserQR.push({
+                                        id: key,
+                                        srcQR: strQr,
+                                        phoneNumber: item.phoneNumber
+                                    })
                                 })
-                            })
+                            }
 
                         })
                     this.setState({ listUser: listUserQR, currentUser: listUserQR[0], isOpenNotiMessage: true })
@@ -222,7 +225,7 @@ export default class Lottery extends Component {
 
 
     setRandom = () => {
-        let { listUser, listWinner, currentPrize, isClickedRoll, reward } = this.state
+        let { listUser, listWinner, currentPrize, isClickedRoll, reward, listWinnerWithoutPrize } = this.state
         if (listUser.length == 0) {
             this.setState({ isEndOfList: true })
         }
@@ -277,6 +280,7 @@ export default class Lottery extends Component {
                             clearInterval(this.state.interval)
                             this.setState({ currentUser: listUser[trullyRandomNumber], currentPosition: trullyRandomNumber })
                             listWinner[currentPrize].push(listUser[trullyRandomNumber].phoneNumber)
+                            listWinnerWithoutPrize.push(listUser[trullyRandomNumber].phoneNumber)
                             this.handleAddWinner(listUser[trullyRandomNumber].phoneNumber, reward[currentPrize])
                             listUser.splice(trullyRandomNumber, 1)
                             this.setState({ listWinner, listUser, interval: "", isClickedRoll: false })
