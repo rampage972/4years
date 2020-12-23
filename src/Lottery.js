@@ -5,7 +5,7 @@ import SwiperCore, { Autoplay } from 'swiper';
 import { withStyles } from '@material-ui/core/styles';
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import { Button, Collapse, List, ListItem, Typography, Paper, Tab, Tabs, TableBody, TableCell, TableRow, TableHead, Table, TableContainer, AccordionSummary as MuiAccordionSummary, Accordion, AccordionDetails, IconButton, Backdrop } from '@material-ui/core';
+import { Button, Collapse, List, ListItem, Typography, Paper, Tab, Tabs, TableBody, TableCell, TableRow, TableHead, Table, TableContainer, AccordionSummary as MuiAccordionSummary, Accordion, AccordionDetails, IconButton, Backdrop, Snackbar } from '@material-ui/core';
 import { faCloudUploadAlt, faDollarSign, faDownload, faFileExport, faMoneyBillWave } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import QRCode from 'qrcode'
@@ -14,6 +14,7 @@ import './button.css'
 import 'swiper/swiper.scss';
 import account from './Login/login.json'
 import tmpReward from './reward.json'
+import Alert from '@material-ui/lab/Alert';
 const reward = tmpReward.reward
 const confetti = require('canvas-confetti')
 const random = require('random')
@@ -32,7 +33,6 @@ export default class Lottery extends Component {
         super()
         this.state = {
             isShowListWinner: false,
-            isShowGetListUser: true,
             isEndOfList: false,
             listWomenPrize: [],
             currentIndexWomen: 0,
@@ -122,7 +122,7 @@ export default class Lottery extends Component {
                 requestAnimationFrame(frame);
             }
         }());
-
+        this.handleGetListUser()
     }
     my_onkeydown_handler = (event) => {
         switch (event.keyCode) {
@@ -143,20 +143,23 @@ export default class Lottery extends Component {
         closeGame(data).then(async res => {
             if (res.data.errorCode == "00") {
                 let listUserQR = []
-                await
-                    res.data.data.map(async (item, key) => {
-                        let strQr
-                        QRCode.toDataURL("bank:VNPTPAY|receiver_id:" + item.phoneNumber + "|transfer_type:MYQRTRANSFER|amount:0").then(data => {
-                            strQr = data
-                            listUserQR.push({
-                                id: key,
-                                srcQR: strQr,
-                                phoneNumber: item.phoneNumber
-                            })
-                        })
+                this.setState({ listUser: [] }, async () => {
 
-                    })
-                this.setState({ listUser: listUserQR, isShowGetListUser: false, currentUser: listUserQR[0] })
+                    await
+                        res.data.data.map(async (item, key) => {
+                            let strQr
+                            QRCode.toDataURL("bank:VNPTPAY|receiver_id:" + item.phoneNumber + "|transfer_type:MYQRTRANSFER|amount:0").then(data => {
+                                strQr = data
+                                listUserQR.push({
+                                    id: key,
+                                    srcQR: strQr,
+                                    phoneNumber: item.phoneNumber
+                                })
+                            })
+
+                        })
+                    this.setState({ listUser: listUserQR, currentUser: listUserQR[0], isOpenNotiMessage: true })
+                })
             }
             else if (res.data.errorCode == "06") {
                 let dataOpen = {
@@ -172,7 +175,6 @@ export default class Lottery extends Component {
             }
         }).catch(err => {
             console.log(err)
-            this.setState({ isShowGetListUser: false })
 
         })
     }
@@ -199,7 +201,7 @@ export default class Lottery extends Component {
         }
         openGame(data).then(res => {
             if (res.data.errorCode == "00") {
-                this.setState({ listUser: [], isShowGetListUser: true })
+                this.setState({ listUser: [] })
             }
         })
     }
@@ -354,6 +356,7 @@ export default class Lottery extends Component {
                 else
                     reward[i].isChoosen = true
             }
+            this.handleGetListUser()
             this.setState({ reward, currentPrize: e })
         }
     }
@@ -397,8 +400,8 @@ export default class Lottery extends Component {
     render() {
         const {
             speedAutoPlay, listUser, reward, autoPlay,
-            currentUser, isShowGetListUser, prizeBeginMutiple,
-            isEndOfList, currentPrize, interval, listWinner,
+            currentUser, prizeBeginMutiple,
+            isEndOfList, currentPrize, interval, listWinner, isOpenNotiMessage,
             listCurrentUser, isClickedRoll, intervalMultiple, isShowListWinner
         } = this.state
         return (
@@ -437,9 +440,6 @@ export default class Lottery extends Component {
                                         </Paper>
                                     ))}
                                 </div>
-                            </div>
-                            <div className="text-center">
-                                <button className="bttn-jelly bttn-md bttn-danger" onClick={this.handleCreateNewTurn}>Huỷ Chốt Danh Sách</button>
                             </div>
                         </Paper>
                     </div>
@@ -586,10 +586,11 @@ export default class Lottery extends Component {
                         </Paper>
                     </div>
                 </div>
-                <Backdrop open={isShowGetListUser} style={{ backgroundColor: "white", zIndex: "100" }}>
-                    <button className="bttn-unite bttn-md bttn-primary" onClick={this.handleGetListUser}> Chốt danh sách</button>
-                </Backdrop>
-
+                <Snackbar style={{ paddingTop: "1em" }} anchorOrigin={{ vertical: "top", horizontal: "right" }} open={isOpenNotiMessage} autoHideDuration={2000} onClose={() => this.setState({ isOpenNotiMessage: false })}>
+                    <Alert elevation={6} onClose={() => this.setState({ isOpenNotiMessage: false })} severity={"success"}>
+                        Đã cập nhật danh sách khách mời.
+                    </Alert>
+                </Snackbar>
             </div>
         )
     }
