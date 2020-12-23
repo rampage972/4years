@@ -125,4 +125,84 @@
 }
 
 
-.swiper-wrapper{-webkit-transition-timing-function:linear!important; -o-transition-timing-function:linear!important; transition-timing-function:linear!important; }
+.swiper-wrapper {
+  -webkit-transition-timing-function: linear !important;
+  -o-transition-timing-function: linear !important;
+  transition-timing-function: linear !important;
+}
+
+.phoneQR-roll-img {
+  position: absolute;
+  margin: 0 auto;
+  left: 0;
+  right: -5%;
+  bottom: 0;
+  height: 70%;
+}
+
+.banner-left {
+  height: 3em;
+  margin-left: 2em;
+}
+
+.banner-right {
+  width: 40%;
+}
+
+.mainRoll-img {
+  width: 150px;
+  height: 150px;
+}
+
+.prize-container {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+
+.rollBtn-container .roll-btn,
+.rollBtn-container .roll-btn-gradient {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.9);
+  border-radius: 50px;
+  background: linear-gradient(-45deg, #ffa63d, #ff3d77, #338aff, #3cf0c5);
+  background-size: 600%;
+  -webkit-animation: anime 16s linear infinite;
+  animation: anime 16s linear infinite;
+}
+
+.rollBtn-container .roll-btn-gradient {
+  position: absolute;
+  margin-top: -70px;
+  z-index: -1;
+  -webkit-filter: blur(30px);
+  filter: blur(30px);
+  opacity: 0.8;
+}
+
+@-webkit-keyframes anime {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes anime {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}

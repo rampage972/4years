@@ -9,7 +9,7 @@ import { Button, Collapse, List, ListItem, Typography, Paper, Tab, Tabs, TableBo
 import { faCloudUploadAlt, faDollarSign, faDownload, faFileExport, faMoneyBillWave } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import QRCode from 'qrcode'
-import { openGame, closeGame,addWinner } from './services'
+import { openGame, closeGame, addWinner } from './services'
 import './button.css'
 import 'swiper/swiper.scss';
 import account from './Login/login.json'
@@ -87,6 +87,41 @@ export default class Lottery extends Component {
     }
     componentDidMount = () => {
         document.addEventListener("keydown", this.my_onkeydown_handler);
+        let canvasListWinner = document.getElementById('confetti')
+        let confettiListWinner = canvasListWinner.confetti || confetti.create(canvasListWinner, { resize: true });
+
+        var duration = 600 * 1000;
+        var animationEnd = Date.now() + duration;
+        var skew = 1;
+
+        function randomInRange(min, max) {
+            return Math.random() * (max - min) + min;
+        }
+
+        (function frame() {
+            var timeLeft = animationEnd - Date.now();
+            var ticks = Math.max(200, 500 * (timeLeft / duration));
+            skew = Math.max(0.8, skew - 0.001);
+
+            confettiListWinner({
+                particleCount: 1,
+                startVelocity: 0,
+                ticks: ticks,
+                gravity: 0.5,
+                origin: {
+                    x: Math.random(),
+                    // since particles fall down, skew start toward the top
+                    y: (Math.random() * skew) - 0.2
+                },
+                colors: ['#ffffff'],
+                shapes: ['circle'],
+                scalar: randomInRange(0.4, 1)
+            });
+
+            if (timeLeft > 0) {
+                requestAnimationFrame(frame);
+            }
+        }());
 
     }
     my_onkeydown_handler = (event) => {
@@ -151,7 +186,7 @@ export default class Lottery extends Component {
         }
         addWinner(data).then(res => {
             if (res.data.errorCode == "00") {
-               
+
             }
         })
     }
@@ -375,8 +410,8 @@ export default class Lottery extends Component {
 
                     <div className={"col-md-3"} style={{ minHeight: "85vh" }}>
 
-                        <Paper style={{ height: "100%", position: "relative" }}>
-                            <img src="/images/background-list.png" alt="" style={{ position: "absolute", width: " 100%", height: "100%" }} />
+                        <Paper style={{ height: "100%", position: "relative", backgroundColor: "transparent", height: "100%", backgroundImage: "url('/images/background-list.png')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
+                            {/* <img src="/images/background-list.png" alt="" style={{ position: "absolute", width: " 100%", height: "100%" }} /> */}
                             <div >
 
                                 <h3 className="text-center position-relative" style={{ padding: "10px" }}>
@@ -388,13 +423,13 @@ export default class Lottery extends Component {
                                 </div>
                                 <div style={{ padding: "10px" }}>
                                     {reward.map((item, key) => (
-                                        <Paper key={key} className={item.isChoosen ? "mb-2 border-Paper" : "mb-2"} elevation={item.isChoosen ? 4 : 1} onClick={() => this.handleClickPrize(key)} style={{ cursor: "pointer" }}>
-                                            <div className="row">
+                                        <Paper key={key} className={item.isChoosen ? "mb-2 border-Paper prize-container" : "mb-2 prize-container"} elevation={item.isChoosen ? 4 : 1} onClick={() => this.handleClickPrize(key)} style={{ cursor: "pointer" }}>
+                                            <div className="row pt-2 pb-2">
                                                 <div className="col-md-3 content-middle">
                                                     <img style={{ width: "100%" }} src={"/rewardIcon/" + (key + 1) + ".png"} alt="" />
                                                 </div>
                                                 <div className="col-md-9">
-                                                    <h2>{item.name}</h2>
+                                                    <h4>{item.name}</h4>
                                                     <span style={{ color: "green" }}><FontAwesomeIcon icon={faMoneyBillWave} /> {item.prize.toLocaleString('ja-JP') + " VNĐ"}</span>
                                                     <span style={{ paddingLeft: "1em", color: "red", fontWeight: "bold" }}>{listWinner[key].length + "/" + item.numberOfPrize}</span>
                                                 </div>
@@ -409,14 +444,15 @@ export default class Lottery extends Component {
                         </Paper>
                     </div>
                     <div className={"col-md-6"} style={{ minHeight: "85vh" }}>
-                        <Paper style={{ backgroundColor: "rgb(255,227,229)", height: "100%", backgroundImage: "url('/images/background-roll.jpg')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
+                        <img src="/images/QR-Game-Roll.png" alt="" className="phoneQR-roll-img" />
+                        <Paper style={{ backgroundColor: "transparent", height: "100%", backgroundImage: "url('/images/background-roll.png')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
 
-                            <div className="d-flex justify-content-between pt-4">
+                            <div className="d-flex justify-content-between pt-4 align-items-center">
 
-                                <img src="/images/left-banner.png" alt="" style={{ width: "18em" }} />
-                                <img src="/images/banner.png" alt="" style={{ width: "200px" }} />
+                                <img src="/images/left-banner.png" alt="" className="banner-left" />
+                                <img src="/images/banner.png" alt="" className="banner-right" />
                             </div>
-                            <div className="row justify-content-md-center" style={{ width: "100%", textAlign: "center", margin: 0, position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
+                            <div className="row justify-content-md-center" style={{ width: "100%", textAlign: "center", margin: 0, position: "absolute", top: "58%", left: "51%", transform: "translate(-50%, -50%)" }}>
                                 {!isEndOfList ?
                                     currentPrize !== -1 ?
                                         currentPrize <= prizeBeginMutiple ? //Chọn lựa quay 1 ảnh 1 lúc
@@ -430,17 +466,17 @@ export default class Lottery extends Component {
                                                         classNames="lottery-avatar"
                                                     >
                                                         <>
-                                                            <img className="moveToList" style={{ width: "250px", height: "250px" }} src={currentUser.srcQR} alt="" />
+                                                            <img className="moveToList mainRoll-img" src={currentUser.srcQR} alt="" />
                                                         </>
                                                     </CSSTransition>
                                                 </TransitionGroup>
                                                 {interval == "" && currentPrize < 2 && listWinner[currentPrize].length > 0 ?
-                                                    <img className="moveToList" src={"/images/frame" + (currentPrize) + ".png"} alt="" style={{ width: "250px", height: "250px", transform: "scale(1.2)" }} />
+                                                    <img className="moveToList mainRoll-img" src={"/images/frame" + (currentPrize) + ".png"} alt="" style={{ transform: "scale(1.2)" }} />
                                                     : null
                                                 }
                                                 <canvas id="fireWork"></canvas>
 
-                                                <img style={{ width: "250px", height: "250px" }} src={currentUser.srcQR} alt="" />
+                                                <img className="mainRoll-img" src={currentUser.srcQR} alt="" />
 
                                             </div>
                                             : // Quay nhiều ảnh 1 lúc
@@ -474,16 +510,22 @@ export default class Lottery extends Component {
                                     </h3>
                                 }
                                 {!isEndOfList ?
-                                    <div className={"text-center mt-2"} style={currentPrize <= prizeBeginMutiple ? { bottom: "10em" } : { marginTop: "2em" }}>
-                                        <Button style={{ padding: "1em 4em", backgroundColor: "#ec1c24", color: "white" }} disabled={isClickedRoll} variant="contained" onClick={currentPrize <= prizeBeginMutiple ? this.setRandom : this.setMultipleRandom}>Roll</Button>
+                                    <div className={"text-center mt-4 rollBtn-container"} style={currentPrize <= prizeBeginMutiple ? { bottom: "10em" } : { marginTop: "2em" }}>
+
+
+                                        <div >
+                                            <Button className="roll-btn" style={{ padding: "1em 4em", backgroundColor: "#ec1c24", color: "white" }} disabled={isClickedRoll} variant="contained" onClick={currentPrize <= prizeBeginMutiple ? this.setRandom : this.setMultipleRandom}>Roll</Button>
+                                            <div className="roll-btn-gradient"></div>
+                                        </div>
                                     </div> : null}
                             </div>
                         </Paper>
                     </div>
 
                     <div className="col-md-3">
-                        <Paper style={{ height: "100%", position: "relative" }}>
-                            <div style={{ backgroundImage: "url('/images/confetti.gif')" }}>
+                        <Paper style={{ height: "100%", position: "relative", backgroundColor: "transparent", height: "100%", backgroundImage: "url('/images/background-list.png')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
+                            <div >
+                                <canvas id="confetti" className="position-absolute" style={{ width: "100%", height: "5em" }}></canvas>
                                 <h3 className="text-center" style={{ padding: "10px" }}>
                                     Danh sách trúng giải
                             </h3>
