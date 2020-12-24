@@ -130,15 +130,16 @@ export default class Lottery extends Component {
         this.handleGetListUser()
     }
     my_onkeydown_handler = (event) => {
+        if (event.ctrlKey && event.keyCode == 77) {
+            localStorage.removeItem("listWinner")
+        }
         switch (event.keyCode) {
             case 116: // 'F5'
                 event.preventDefault();
                 // event.keyCode = 0;
                 window.status = "F5 disabled";
                 break;
-            case 77: // 'M'
-                localStorage.removeItem("listWinner")
-                break;
+
         }
     }
 
