@@ -442,7 +442,7 @@ export default class Lottery extends Component {
                                 </div>
                                 <div style={{ padding: "10px" }}>
                                     {reward.map((item, key) => (
-                                        <Paper key={key} className={item.isChoosen ? "mb-2 border-Paper prize-container" : "mb-2 prize-container"} elevation={item.isChoosen ? 4 : 1} onClick={() => this.handleClickPrize(key)} style={{ cursor: "pointer" }}>
+                                        <Paper key={key} className={item.isChoosen ? "mb-2 border-Paper prize-container" : "mb-2 prize-container"} elevation={item.isChoosen ? 5 : 1} onClick={() => this.handleClickPrize(key)} style={{ cursor: "pointer" }}>
                                             <div className="row pt-2 pb-2">
                                                 <div className="col-md-3 content-middle">
                                                     <img style={{ width: "100%" }} src={"/rewardIcon/" + (key + 1) + ".png"} alt="" />

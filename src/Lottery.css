@@ -60,7 +60,9 @@
 }
 
 .border-Paper {
-  border: 3px solid green;
+  border: 3px solid #00FF00;
+  transform: scale(1.05);
+  transition: all 0.5s ease-in-out;
   border-radius: 10px;
   cursor: pointer;
 }
@@ -155,6 +157,7 @@
 }
 
 .prize-container {
+  transition: 0.5s all ease-in-out;
   background-color: rgba(255, 255, 255, 0.8) !important;
 }
 
