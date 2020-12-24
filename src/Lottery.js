@@ -470,7 +470,7 @@ export default class Lottery extends Component {
                             <div className="row justify-content-md-center" style={{ width: "100%", textAlign: "center", margin: 0, position: "absolute", top: "58%", left: "51%", transform: "translate(-50%, -50%)" }}>
                                 {!isEndOfList ?
                                     currentPrize !== -1 ?
-                                        currentPrize <= prizeBeginMutiple ? //Chọn lựa quay 1 ảnh 1 lúc
+                                        currentPrize <= prizeBeginMutiple && listUserIMG.length > 0 ? //Chọn lựa quay 1 ảnh 1 lúc
                                             <div className="col-md-12">
                                                 <TransitionGroup
                                                     style={{ position: "relative" }}
