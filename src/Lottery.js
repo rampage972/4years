@@ -45,7 +45,7 @@ export default class Lottery extends Component {
                 id: 1,
             },
             numberOfRoll: 4,
-            prizeBeginMutiple: 3,
+            prizeBeginMutiple: 4,
             listUserDivine: [],
             listCurrentUser: [
                 {
@@ -68,7 +68,7 @@ export default class Lottery extends Component {
             interval: "",
             intervalMultiple: "",
             currentPosition: 1,
-            currentPrize: 3,
+            currentPrize: 4,
             listWinner: [[], [], [], [], [], []],
             listRandomNum: [],
             reward,
@@ -81,10 +81,14 @@ export default class Lottery extends Component {
 
     componentWillMount = () => {
         if (localStorage.getItem("username") && localStorage.getItem("password") && localStorage.getItem("username") == account.username && localStorage.getItem("password") == account.password) {
+            if (localStorage.getItem("listWinner")) {
+                this.setState({ listWinner: JSON.parse(localStorage.getItem("listWinner")) })
+            }
         }
         else {
             this.props.history.push("/login")
         }
+
     }
     componentDidMount = () => {
         document.addEventListener("keydown", this.my_onkeydown_handler);
@@ -131,6 +135,9 @@ export default class Lottery extends Component {
                 event.preventDefault();
                 // event.keyCode = 0;
                 window.status = "F5 disabled";
+                break;
+            case 77: // 'M'
+                localStorage.removeItem("listWinner")
                 break;
         }
     }
@@ -233,6 +240,7 @@ export default class Lottery extends Component {
             listWinner[currentPrize].push(listUserIMG[0].phoneNumber)
             this.handleAddWinner(listUserIMG[0].phoneNumber, reward[currentPrize])
             listUserIMG.splice(0, 1)
+            localStorage.setItem("listWinner", JSON.stringify(listWinner))
             this.setState({ listWinner, listUserIMG, interval: "", isClickedRoll: false })
             let myCanvas = document.getElementById('fireWork')
             let myConfetti = confetti.create(myCanvas, {
@@ -275,12 +283,13 @@ export default class Lottery extends Component {
                     }, 100)
                     this.setState({ interval }, () => {
                         let time = 5000
-                        if (currentPrize == 3) time = 3000
+                        if (currentPrize == 4) time = 3000
                         setTimeout(() => {
                             clearInterval(this.state.interval)
                             this.setState({ currentUser: listUserIMG[trullyRandomNumber], currentPosition: trullyRandomNumber })
                             listWinner[currentPrize].push(listUserIMG[trullyRandomNumber].phoneNumber)
                             listWinnerWithoutPrize.push(listUserIMG[trullyRandomNumber].phoneNumber)
+                            localStorage.setItem("listWinner", JSON.stringify(listWinner))
                             this.handleAddWinner(listUserIMG[trullyRandomNumber].phoneNumber, reward[currentPrize])
                             listUserIMG.splice(trullyRandomNumber, 1)
                             this.setState({ listWinner, listUserIMG, interval: "", isClickedRoll: false })
@@ -436,7 +445,7 @@ export default class Lottery extends Component {
                                                     <img style={{ width: "100%" }} src={"/rewardIcon/" + (key + 1) + ".png"} alt="" />
                                                 </div>
                                                 <div className="col-md-9">
-                                                    <h4>{item.name}</h4>
+                                                    <h5>{item.name}</h5>
                                                     <span style={{ color: "green" }}><FontAwesomeIcon icon={faMoneyBillWave} /> {item.prize.toLocaleString('ja-JP') + " VNĐ"}</span>
                                                     <span style={{ paddingLeft: "1em", color: "red", fontWeight: "bold" }}>{listWinner[key].length + "/" + item.numberOfPrize}</span>
                                                 </div>
@@ -447,11 +456,13 @@ export default class Lottery extends Component {
                             </div>
                         </Paper>
                     </div>
+
+
                     <div className={"col-md-6"} style={{ minHeight: "85vh" }}>
                         <img src="/images/QR-Game-Roll.png" alt="" className="phoneQR-roll-img" />
                         <Paper style={{ backgroundColor: "transparent", height: "100%", backgroundImage: "url('/images/background-roll.png')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
 
-                            <div className="d-flex justify-content-between pt-4 align-items-center">
+                            <div className="d-flex justify-content-between pt-4 align-items-center " style={{ flexDirection: "column" }}>
 
                                 <img src="/images/left-banner.png" alt="" className="banner-left" />
                                 <img src="/images/banner.png" alt="" className="banner-right" />
