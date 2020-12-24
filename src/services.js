@@ -3,7 +3,7 @@ const ip = "10.144.13.151"
 // const ip = "10.144.14.130"
 const port = "1368"
 // const link = "http://" + ip + ":" + port + "/"
-const link = "https://sandboxpay.vnptmedia.vn/admin-api/"
+const link = "https://mayman.vnptfintech.vn/"
 export const openGame = (data) => {
     return axios({
         method: "POST",

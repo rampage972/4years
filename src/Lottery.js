@@ -119,7 +119,7 @@ export default class Lottery extends Component {
                 scalar: randomInRange(0.4, 1)
             });
 
-            if (timeLeft > 0) {
+            if (true) {
                 requestAnimationFrame(frame);
             }
         }());
