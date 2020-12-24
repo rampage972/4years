@@ -429,7 +429,7 @@ export default class Lottery extends Component {
 
                     <div className={"col-md-3"} style={{ minHeight: "85vh" }}>
 
-                        <Paper style={{ height: "100%", position: "relative", backgroundColor: "transparent", height: "100%", backgroundImage: "url('/images/background-list.png')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
+                        <Paper style={{ height: "100%", position: "relative", backgroundColor: "transparent", height: "100%", backgroundImage: "linear-gradient( rgba(101,201,242,0.75),rgba(39,89,199,0.5) )", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
                             {/* <img src="/images/background-list.png" alt="" style={{ position: "absolute", width: " 100%", height: "100%" }} /> */}
                             <div >
 
@@ -544,7 +544,7 @@ export default class Lottery extends Component {
                     </div>
 
                     <div className="col-md-3">
-                        <Paper style={{ height: "100%", position: "relative", backgroundColor: "transparent", height: "100%", backgroundImage: "url('/images/background-list.png')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
+                        <Paper style={{ height: "100%", position: "relative", backgroundColor: "transparent", height: "100%", backgroundImage: "linear-gradient( rgba(101,201,242,0.75),rgba(39,89,199,0.5) )", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
                             <div >
                                 <canvas id="confetti" className="position-absolute" style={{ width: "100%", height: "5em" }}></canvas>
                                 <h3 className="text-center pt-4" style={{ padding: "10px" }}>

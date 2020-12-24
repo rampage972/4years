@@ -90,8 +90,8 @@
 }
 
 .section-break-2:before {
-  background-color: snow;
-  color: #959595;
+  background-color: transparent;
+  color: #FFFFFF;
   content: "\25C8";
   display: inline-block;
   font-size: 20px;
@@ -100,8 +100,8 @@
   line-height: 1;
   text-indent: -1px;
   text-rendering: geometricPrecision;
-  -webkit-transform: translateY(-53%);
-  transform: translateY(-53%);
+  -webkit-transform: translateY(-60%);
+  transform: translateY(-60%);
   width: 15px;
 }
 
