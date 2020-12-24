@@ -15,11 +15,13 @@ import 'swiper/swiper.scss';
 import account from './Login/login.json'
 import tmpReward from './reward.json'
 import Alert from '@material-ui/lab/Alert';
+const { createCanvas, loadImage } = require("canvas");
 const reward = tmpReward.reward
 const confetti = require('canvas-confetti')
 const random = require('random')
 const RandomOrg = require('random-org');
 const dayjs = require('dayjs')
+const center_image = require('./QR-logo.png')
 const randomOrg = new RandomOrg({ apiKey: 'b558199b-0a92-43cb-991b-23551659a901' });
 SwiperCore.use([Autoplay]);
 const AccordionSummary = withStyles({
@@ -145,6 +147,27 @@ export default class Lottery extends Component {
         }
     }
 
+    createQRWithLogo = async (dataForQRcode) => {
+
+        let width = 150
+        const canvas = createCanvas(width, width);
+        await
+            QRCode.toCanvas(canvas, dataForQRcode, {
+                errorCorrectionLevel: "H",
+                margin: 1,
+                color: {
+                    dark: "#000000",
+                    light: "#ffffff",
+                },
+            });
+
+        const ctx = canvas.getContext("2d");
+        const img = await loadImage(center_image);
+        const center = 75
+        ctx.drawImage(img, center, center, 50, 50)
+        return canvas.toDataURL("image/png");
+    }
+
     handleGetListUser = () => {
         let data = {
             "requestDate": dayjs().format("YYYYMMDDHHmmss"),
@@ -156,22 +179,23 @@ export default class Lottery extends Component {
                 let listUserIMG = []
                 this.setState({ listUserIMG: [] }, async () => {
 
-                    await
-                        res.data.data.map(async (item, key) => {
-                            if (this.state.listWinnerWithoutPrize.indexOf(item.phoneNumber) == -1) {
-                                let strQr
-                                QRCode.toDataURL("bank:VNPTPAY|receiver_id:" + item.phoneNumber + "|transfer_type:MYQRTRANSFER|amount:0").then(data => {
-                                    strQr = data
-                                    listUserIMG.push({
-                                        id: key,
-                                        srcQR: strQr,
-                                        phoneNumber: item.phoneNumber
-                                    })
-                                })
-                            }
+                    const promisess = res.data.data.map(async (item, key) => {
+                        if (this.state.listWinnerWithoutPrize.indexOf(item.phoneNumber) == -1) {
+                            let strQr
+                            strQr = await this.createQRWithLogo("bank:VNPTPAY|receiver_id:" + item.phoneNumber + "|transfer_type:MYQRTRANSFER|amount:0")
+                            listUserIMG.push({
+                                id: key,
+                                srcQR: strQr,
+                                phoneNumber: item.phoneNumber
+                            })
+                            return Promise.resolve()
+                        }
 
-                        })
-                    this.setState({ listUserIMG: listUserIMG, currentUser: listUserIMG[0], isOpenNotiMessage: true })
+                    })
+                    Promise.all(promisess).then(() => {
+
+                        this.setState({ listUserIMG: listUserIMG, currentUser: listUserIMG[0], isOpenNotiMessage: true })
+                    })
                 })
             }
             else if (res.data.errorCode == "06") {
