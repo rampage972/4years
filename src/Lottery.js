@@ -464,7 +464,7 @@ export default class Lottery extends Component {
 
                             <div className="d-flex justify-content-between pt-4 align-items-center " style={{ flexDirection: "column" }}>
 
-                                <img src="/images/left-banner.png" alt="" className="banner-left" />
+                                {/* <img src="/images/left-banner.png" alt="" className="banner-left" /> */}
                                 <img src="/images/banner.png" alt="" className="banner-right" />
                             </div>
                             <div className="row justify-content-md-center" style={{ width: "100%", textAlign: "center", margin: 0, position: "absolute", top: "58%", left: "51%", transform: "translate(-50%, -50%)" }}>
