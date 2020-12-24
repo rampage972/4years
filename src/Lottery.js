@@ -34,6 +34,7 @@ export default class Lottery extends Component {
         this.state = {
             isShowListWinner: false,
             isEndOfList: false,
+            isOpenMessageDelete: false,
             listWomenPrize: [],
             currentIndexWomen: 0,
             listWinnerWithoutPrize: [],
@@ -132,6 +133,7 @@ export default class Lottery extends Component {
     my_onkeydown_handler = (event) => {
         if (event.ctrlKey && event.keyCode == 77) {
             localStorage.removeItem("listWinner")
+            this.setState({ isOpenMessageDelete: true })
         }
         switch (event.keyCode) {
             case 116: // 'F5'
@@ -414,7 +416,7 @@ export default class Lottery extends Component {
     render() {
         const {
             speedAutoPlay, listUserIMG, reward, autoPlay,
-            currentUser, prizeBeginMutiple,
+            currentUser, prizeBeginMutiple, isOpenMessageDelete,
             isEndOfList, currentPrize, interval, listWinner, isOpenNotiMessage,
             listCurrentUser, isClickedRoll, intervalMultiple, isShowListWinner
         } = this.state
@@ -491,7 +493,10 @@ export default class Lottery extends Component {
                                                     : null
                                                 }
                                                 <canvas id="fireWork"></canvas>
+                                                {/* <div className="">
 
+                                                    <img src="/images/QR-logo.png" alt="" style={{ width: "50px", height: "50px", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }} />
+                                                </div> */}
                                                 <img className="mainRoll-img" src={currentUser.srcQR} alt="" />
 
                                             </div>
@@ -530,7 +535,7 @@ export default class Lottery extends Component {
 
 
                                         <div >
-                                            <Button className="roll-btn" style={{ padding: "1em 4em", backgroundColor: "#ec1c24", color: "white" }} disabled={isClickedRoll} variant="contained" onClick={currentPrize <= prizeBeginMutiple ? this.setRandom : this.setMultipleRandom}>Roll</Button>
+                                            <Button className="roll-btn" style={{ padding: "1em 4em", backgroundColor: "#ec1c24", color: "white" }} disabled={isClickedRoll} variant="contained" onClick={currentPrize <= prizeBeginMutiple ? this.setRandom : this.setMultipleRandom}>QUAY</Button>
                                             <div className="roll-btn-gradient"></div>
                                         </div>
                                     </div> : null}
@@ -605,6 +610,11 @@ export default class Lottery extends Component {
                 <Snackbar style={{ paddingTop: "1em" }} anchorOrigin={{ vertical: "top", horizontal: "right" }} open={isOpenNotiMessage} autoHideDuration={2000} onClose={() => this.setState({ isOpenNotiMessage: false })}>
                     <Alert elevation={6} onClose={() => this.setState({ isOpenNotiMessage: false })} severity={"success"}>
                         Đã cập nhật danh sách khách mời.
+                    </Alert>
+                </Snackbar>
+                <Snackbar style={{ paddingTop: "1em" }} anchorOrigin={{ vertical: "top", horizontal: "right" }} open={isOpenMessageDelete} autoHideDuration={2000} onClose={() => this.setState({ isOpenMessageDelete: false })}>
+                    <Alert elevation={6} onClose={() => this.setState({ isOpenMessageDelete: false })} severity={"success"}>
+                        Đã xoá danh sách trúng thưởng.
                     </Alert>
                 </Snackbar>
             </div>
