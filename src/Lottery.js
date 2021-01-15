@@ -22,6 +22,7 @@ const RandomOrg = require('random-org');
 const dayjs = require('dayjs')
 const center_image = require('./QR-logo.png')
 const randomOrg = new RandomOrg({ apiKey: 'b558199b-0a92-43cb-991b-23551659a901' });
+const rawListUser = require("./user.json")
 SwiperCore.use([Autoplay]);
 const AccordionSummary = withStyles({
     root: {
@@ -173,45 +174,32 @@ export default class Lottery extends Component {
             "requestId": "a0c2b554-4483-4d31-80a4-d4b5e9354ec9",
             "status": 0
         }
-        fetch('/data.txt').then(res => res.text()).then(async text => {
-            let listUserIMG = []
-            let listNumber = text.split("\n")
-            console.log(listNumber)
-            this.setState({ listUserIMG: [] }, async () => {
 
-                const promisess = listNumber.map(async (phoneNumber, key) => {
-                    if (this.state.listWinnerWithoutPrize.indexOf(phoneNumber) == -1) {
-                        let strQr
-                        strQr = await this.createQRWithLogo("bank:VNPTPAY|receiver_id:" + phoneNumber + "|transfer_type:MYQRTRANSFER|amount:0")
-                        listUserIMG.push({
-                            id: key,
-                            srcQR: strQr,
-                            phoneNumber: phoneNumber
-                        })
-                        return Promise.resolve()
-                    }
+        let listUserIMG = []
+        this.setState({ listUserIMG: [] }, async () => {
 
-                })
-                Promise.all(promisess).then(() => {
+            const promisess = rawListUser.map(async (item, key) => {
+                if (this.state.listWinnerWithoutPrize.indexOf(item["SĐT"]) == -1) {
+                    let strQr
+                    strQr = await this.createQRWithLogo("bank:VNPTPAY|receiver_id:" + item["SĐT"] + "|transfer_type:MYQRTRANSFER|amount:0")
+                    listUserIMG.push({
+                        id: key,
+                        srcQR: strQr,
+                        phoneNumber: item["SĐT"],
+                        name: item["TÊN"]
+                    })
+                    return Promise.resolve()
+                }
 
-                    this.setState({ listUserIMG: listUserIMG, currentUser: listUserIMG[0], isOpenNotiMessage: true })
-                })
             })
+            Promise.all(promisess).then(() => {
 
-        }).catch(err => {
-            console.log(err)
-
+                this.setState({ listUserIMG: listUserIMG, currentUser: listUserIMG[0], isOpenNotiMessage: true })
+            })
         })
+
     }
 
-    handleAddWinner = (phoneNumber, prizeDetail) => {
-        let data = {
-            "requestDate": dayjs().format("YYYYMMDDHHmmss"),
-            "requestId": "a0c2b554-4483-4d31-80a4-d4b5e9354ec9",
-            phoneNumber,
-            prizeDetail: prizeDetail.name + ": " + prizeDetail.prize
-        }
-    }
 
 
     spliceArray = (number) => {
@@ -235,8 +223,7 @@ export default class Lottery extends Component {
             this.setState({ isEndOfList: true })
         }
         else if (listUserIMG.length == 1) {
-            listWinner[currentPrize].push(listUserIMG[0].phoneNumber)
-            this.handleAddWinner(listUserIMG[0].phoneNumber, reward[currentPrize])
+            listWinner[currentPrize].push(listUserIMG[0].name)
             listUserIMG.splice(0, 1)
             localStorage.setItem("listWinner", JSON.stringify(listWinner))
             this.setState({ listWinner, listUserIMG, interval: "", isClickedRoll: false })
@@ -285,10 +272,9 @@ export default class Lottery extends Component {
                         setTimeout(() => {
                             clearInterval(this.state.interval)
                             this.setState({ currentUser: listUserIMG[trullyRandomNumber], currentPosition: trullyRandomNumber })
-                            listWinner[currentPrize].push(listUserIMG[trullyRandomNumber].phoneNumber)
-                            listWinnerWithoutPrize.push(listUserIMG[trullyRandomNumber].phoneNumber)
+                            listWinner[currentPrize].push(listUserIMG[trullyRandomNumber].name)
+                            listWinnerWithoutPrize.push(listUserIMG[trullyRandomNumber].name)
                             localStorage.setItem("listWinner", JSON.stringify(listWinner))
-                            this.handleAddWinner(listUserIMG[trullyRandomNumber].phoneNumber, reward[currentPrize])
                             listUserIMG.splice(trullyRandomNumber, 1)
                             this.setState({ listWinner, listUserIMG, interval: "", isClickedRoll: false })
                             let myCanvas = document.getElementById('fireWork')
@@ -561,7 +547,7 @@ export default class Lottery extends Component {
                                                         <Accordion square defaultExpanded={true} >
                                                             <AccordionSummary aria-controls="panel1d-content" id="panel1d-header" expandIcon={<ExpandMoreIcon />}>
                                                                 <Typography className="font-weight-bold">
-                                                                {console.log(key)}
+                                                                    {console.log(key)}
                                                                     {reward[key].name}</Typography>
                                                             </AccordionSummary>
                                                             <AccordionDetails>
