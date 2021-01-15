@@ -1,34 +1,22 @@
 {
   "reward": [
     {
-      "name": "Điện thoại SAMSUNG Galaxy A31",
-      "prize": 5650000,
+      "name": "Giải nhất",
+      "prize": 6666000,
       "isChoosen": false,
       "numberOfPrize": 1
     },
     {
-      "name": "Loa Bluetooth AUKEY Eclipse SK-M30",
-      "prize": 790000,
+      "name": "Giải nhì",
+      "prize": 2268000,
       "isChoosen": false,
-      "numberOfPrize": 1
+      "numberOfPrize": 2
     },
     {
-      "name": "Loa Bluetooth JBL Wind",
-      "prize": 690000,
-      "isChoosen": false,
-      "numberOfPrize": 1
-    },
-    {
-      "name": "Bộ quà giáng sinh",
-      "prize": 580000,
-      "isChoosen": false,
-      "numberOfPrize": 1
-    },
-{
-      "name": "Máy sưởi cầm tay",
-      "prize": 350000,
+      "name": "Giải ba",
+      "prize": 668000,
       "isChoosen": true,
-      "numberOfPrize": 1
+      "numberOfPrize": 5
     }
   ]
 }

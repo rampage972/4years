@@ -9,7 +9,6 @@ import { Button, Collapse, List, ListItem, Typography, Paper, Tab, Tabs, TableBo
 import { faCloudUploadAlt, faDollarSign, faDownload, faFileExport, faMoneyBillWave } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import QRCode from 'qrcode'
-import { openGame, closeGame, addWinner } from './services'
 import './button.css'
 import 'swiper/swiper.scss';
 import account from './Login/login.json'
@@ -48,7 +47,7 @@ export default class Lottery extends Component {
                 id: 1,
             },
             numberOfRoll: 4,
-            prizeBeginMutiple: 4,
+            prizeBeginMutiple: 3,
             listUserDivine: [],
             listCurrentUser: [
                 {
@@ -70,9 +69,9 @@ export default class Lottery extends Component {
             isClickedRoll: false,
             interval: "",
             intervalMultiple: "",
-            currentPosition: 1,
-            currentPrize: 4,
-            listWinner: [[], [], [], [], [], []],
+            currentPosition: 2,
+            currentPrize: 2,
+            listWinner: [[], [], []],
             listRandomNum: [],
             reward,
             listUserIMG: [],
@@ -174,42 +173,31 @@ export default class Lottery extends Component {
             "requestId": "a0c2b554-4483-4d31-80a4-d4b5e9354ec9",
             "status": 0
         }
-        closeGame(data).then(async res => {
-            if (res.data.errorCode == "00") {
-                let listUserIMG = []
-                this.setState({ listUserIMG: [] }, async () => {
+        fetch('/data.txt').then(res => res.text()).then(async text => {
+            let listUserIMG = []
+            let listNumber = text.split("\n")
+            console.log(listNumber)
+            this.setState({ listUserIMG: [] }, async () => {
 
-                    const promisess = res.data.data.map(async (item, key) => {
-                        if (this.state.listWinnerWithoutPrize.indexOf(item.phoneNumber) == -1) {
-                            let strQr
-                            strQr = await this.createQRWithLogo("bank:VNPTPAY|receiver_id:" + item.phoneNumber + "|transfer_type:MYQRTRANSFER|amount:0")
-                            listUserIMG.push({
-                                id: key,
-                                srcQR: strQr,
-                                phoneNumber: item.phoneNumber
-                            })
-                            return Promise.resolve()
-                        }
-
-                    })
-                    Promise.all(promisess).then(() => {
-
-                        this.setState({ listUserIMG: listUserIMG, currentUser: listUserIMG[0], isOpenNotiMessage: true })
-                    })
-                })
-            }
-            else if (res.data.errorCode == "06") {
-                let dataOpen = {
-                    "requestDate": dayjs().format("YYYYMMDDHHmmss"),
-                    "requestId": "a0c2b554-4483-4d31-80a4-d4b5e9354ec9",
-                    "status": 1
-                }
-                openGame(dataOpen).then(res => {
-                    if (res.data.errorCode == "00") {
-                        this.handleGetListUser()
+                const promisess = listNumber.map(async (phoneNumber, key) => {
+                    if (this.state.listWinnerWithoutPrize.indexOf(phoneNumber) == -1) {
+                        let strQr
+                        strQr = await this.createQRWithLogo("bank:VNPTPAY|receiver_id:" + phoneNumber + "|transfer_type:MYQRTRANSFER|amount:0")
+                        listUserIMG.push({
+                            id: key,
+                            srcQR: strQr,
+                            phoneNumber: phoneNumber
+                        })
+                        return Promise.resolve()
                     }
+
                 })
-            }
+                Promise.all(promisess).then(() => {
+
+                    this.setState({ listUserIMG: listUserIMG, currentUser: listUserIMG[0], isOpenNotiMessage: true })
+                })
+            })
+
         }).catch(err => {
             console.log(err)
 
@@ -223,25 +211,8 @@ export default class Lottery extends Component {
             phoneNumber,
             prizeDetail: prizeDetail.name + ": " + prizeDetail.prize
         }
-        addWinner(data).then(res => {
-            if (res.data.errorCode == "00") {
-
-            }
-        })
     }
 
-    handleCreateNewTurn = () => {
-        let data = {
-            "requestDate": dayjs().format("YYYYMMDDHHmmss"),
-            "requestId": "a0c2b554-4483-4d31-80a4-d4b5e9354ec9",
-            "status": 1
-        }
-        openGame(data).then(res => {
-            if (res.data.errorCode == "00") {
-                this.setState({ listUserIMG: [] })
-            }
-        })
-    }
 
     spliceArray = (number) => {
         let { listUserIMG, listUserDivine } = this.state
@@ -453,7 +424,7 @@ export default class Lottery extends Component {
 
                     <div className={"col-md-3"} style={{ minHeight: "85vh" }}>
 
-                        <Paper style={{ height: "100%", position: "relative", backgroundColor: "transparent", height: "100%", backgroundImage: "linear-gradient( rgba(101,201,242,0.75),rgba(39,89,199,0.5) )", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
+                        <Paper className="side-col" >
                             {/* <img src="/images/background-list.png" alt="" style={{ position: "absolute", width: " 100%", height: "100%" }} /> */}
                             <div >
 
@@ -486,7 +457,7 @@ export default class Lottery extends Component {
 
 
                     <div className={"col-md-6"} style={{ minHeight: "85vh" }}>
-                        <img src="/images/QR-Game-Roll.png" alt="" className="phoneQR-roll-img" />
+                        {/* <img src="/images/QR-Game-Roll.png" alt="" className="phoneQR-roll-img" /> */}
                         <Paper style={{ backgroundColor: "transparent", height: "100%", backgroundImage: "url('/images/background-roll.png')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
 
                             <div className="d-flex justify-content-between pt-4 align-items-center " style={{ flexDirection: "column" }}>
@@ -568,7 +539,7 @@ export default class Lottery extends Component {
                     </div>
 
                     <div className="col-md-3">
-                        <Paper style={{ height: "100%", position: "relative", backgroundColor: "transparent", height: "100%", backgroundImage: "linear-gradient( rgba(101,201,242,0.75),rgba(39,89,199,0.5) )", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
+                        <Paper className="side-col" >
                             <div >
                                 <canvas id="confetti" className="position-absolute" style={{ width: "100%", height: "5em" }}></canvas>
                                 <h3 className="text-center pt-4" style={{ padding: "10px" }}>
@@ -590,6 +561,7 @@ export default class Lottery extends Component {
                                                         <Accordion square defaultExpanded={true} >
                                                             <AccordionSummary aria-controls="panel1d-content" id="panel1d-header" expandIcon={<ExpandMoreIcon />}>
                                                                 <Typography className="font-weight-bold">
+                                                                {console.log(key)}
                                                                     {reward[key].name}</Typography>
                                                             </AccordionSummary>
                                                             <AccordionDetails>
