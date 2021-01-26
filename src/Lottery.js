@@ -451,7 +451,7 @@ export default class Lottery extends Component {
                                 <img src="/images/banner.png" alt="" className="banner-left" />
                             </div>
                             <div className="row justify-content-md-center" style={{ width: "100%", textAlign: "center", margin: 0, position: "absolute", top: "40%", left: "50%", transform: "translate(-50%, -50%)" }}>
-                                <img src="/images/logo.png" alt="" className="pb-4" style={{ height: "30vh" }} />
+                                <img src="/images/logo.png" alt="" className="pb-4" style={{ height: "24vh" }} />
                                 {!isEndOfList ?
                                     currentPrize !== -1 ?
                                         currentPrize <= prizeBeginMutiple && listUserIMG.length > 0 ? //Chọn lựa quay 1 ảnh 1 lúc
