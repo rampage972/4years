@@ -64,9 +64,14 @@
   position: relative;
   background-color: transparent;
   height: 100%;
-  background-image: linear-gradient(rgba(237, 33, 58, 0.75), rgba(147, 41, 30, 0.5));
+  background-image: url('/images/background-col.gif');
   background-repeat: no-repeat;
   background-size: 100% 100%
+}
+
+.side-col-title {
+  padding: 10px;
+  color: #FFFFFF;
 }
 
 .border-Paper {
@@ -153,7 +158,7 @@
 }
 
 .banner-left {
-  height: 3em;
+  width: 30%;
   margin-left: 2em;
 }
 
@@ -162,8 +167,8 @@
 }
 
 .mainRoll-img {
-  width: 150px;
-  height: 150px;
+  width: 200px;
+  height: 200px;
 }
 
 .prize-container {
@@ -177,7 +182,7 @@
   text-align: center;
   color: rgba(255, 255, 255, 0.9);
   border-radius: 50px;
-  background: linear-gradient(-45deg, #ffa63d, #ff3d77, #338aff, #3cf0c5);
+  background: linear-gradient(to right, #c68e39, #f1c75b);
   background-size: 600%;
   -webkit-animation: anime 16s linear infinite;
   animation: anime 16s linear infinite;

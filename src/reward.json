@@ -2,21 +2,21 @@
   "reward": [
     {
       "name": "Giải nhất",
-      "prize": 6666000,
+      "prize": 3000000,
       "isChoosen": false,
       "numberOfPrize": 1
     },
     {
       "name": "Giải nhì",
-      "prize": 2268000,
+      "prize": 2000000,
       "isChoosen": false,
       "numberOfPrize": 2
     },
     {
       "name": "Giải ba",
-      "prize": 668000,
+      "prize": 1000000,
       "isChoosen": true,
-      "numberOfPrize": 5
+      "numberOfPrize": 3
     }
   ]
 }

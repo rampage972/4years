@@ -402,7 +402,7 @@ export default class Lottery extends Component {
             listCurrentUser, isClickedRoll, intervalMultiple, isShowListWinner
         } = this.state
         return (
-            <div className="container-fluid" style={{ background: "url('/images/background.png')", minHeight: "100vh", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
+            <div className="container-fluid" style={{ backgroundColor: "#002151", minHeight: "100vh", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
                 {/* <audio style={{ display: "none" }} src="/background.mp3" autoPlay={true}></audio> */}
                 <div style={{ display: "none" }}>
                 </div>
@@ -414,7 +414,7 @@ export default class Lottery extends Component {
                             {/* <img src="/images/background-list.png" alt="" style={{ position: "absolute", width: " 100%", height: "100%" }} /> */}
                             <div >
 
-                                <h3 className="text-center position-relative pt-4" style={{ padding: "10px" }}>
+                                <h3 className="text-center position-relative pt-4 side-col-title">
                                     Danh sách giải thưởng
                             </h3>
                                 <div className="sb sb-2">
@@ -446,12 +446,12 @@ export default class Lottery extends Component {
                         {/* <img src="/images/QR-Game-Roll.png" alt="" className="phoneQR-roll-img" /> */}
                         <Paper style={{ backgroundColor: "transparent", height: "100%", backgroundImage: "url('/images/background-roll.png')", backgroundRepeat: "no-repeat", backgroundSize: "100% 100% " }}>
 
-                            <div className="d-flex justify-content-between pt-4 align-items-center " style={{ flexDirection: "column" }}>
+                            <div className="d-flex pt-4 align-items-center ">
 
-                                {/* <img src="/images/left-banner.png" alt="" className="banner-left" /> */}
-                                <img src="/images/banner.png" alt="" className="banner-right" />
+                                <img src="/images/banner.png" alt="" className="banner-left" />
                             </div>
-                            <div className="row justify-content-md-center" style={{ width: "100%", textAlign: "center", margin: 0, position: "absolute", top: "58%", left: "51%", transform: "translate(-50%, -50%)" }}>
+                            <div className="row justify-content-md-center" style={{ width: "100%", textAlign: "center", margin: 0, position: "absolute", top: "40%", left: "50%", transform: "translate(-50%, -50%)" }}>
+                                <img src="/images/logo.png" alt="" className="pb-4" style={{ height: "30vh" }} />
                                 {!isEndOfList ?
                                     currentPrize !== -1 ?
                                         currentPrize <= prizeBeginMutiple && listUserIMG.length > 0 ? //Chọn lựa quay 1 ảnh 1 lúc
@@ -469,15 +469,15 @@ export default class Lottery extends Component {
                                                         </>
                                                     </CSSTransition>
                                                 </TransitionGroup>
-                                                {interval == "" && currentPrize < 2 && listWinner[currentPrize].length > 0 ?
+
+                                                <img className="moveToList mainRoll-img" src={"/images/frame" + (0) + ".png"} alt="" style={{ transform: "scale(1.2)" }} />
+
+
+                                                {/* {interval == "" && currentPrize < 2 && listWinner[currentPrize].length > 0 ?
                                                     <img className="moveToList mainRoll-img" src={"/images/frame" + (currentPrize) + ".png"} alt="" style={{ transform: "scale(1.2)" }} />
                                                     : null
-                                                }
+                                                } */}
                                                 <canvas id="fireWork"></canvas>
-                                                {/* <div className="">
-
-                                                    <img src="/images/QR-logo.png" alt="" style={{ width: "50px", height: "50px", position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }} />
-                                                </div> */}
                                                 <img className="mainRoll-img" src={currentUser.srcQR} alt="" />
 
                                             </div>
@@ -528,7 +528,7 @@ export default class Lottery extends Component {
                         <Paper className="side-col" >
                             <div >
                                 <canvas id="confetti" className="position-absolute" style={{ width: "100%", height: "5em" }}></canvas>
-                                <h3 className="text-center pt-4" style={{ padding: "10px" }}>
+                                <h3 className="text-center pt-4 side-col-title">
                                     Danh sách trúng giải
                             </h3>
                             </div>
